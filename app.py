@@ -15,15 +15,47 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from flask import Flask
+from flask import Flask, render_template, request, redirect, url_for
 
 from const import *
+from config import config, load_config, save_config
+from phishdetect import get_events
 
 app = Flask(__name__)
 
+@app.route('/conf', methods=['POST', 'GET'])
+def conf():
+    global config
+
+    if request.method == 'GET':
+        return render_template('conf.html')
+    elif request.method == 'POST':
+        node = request.form.get('node')
+        key = request.form.get('key')
+
+        config = {
+            'node': node,
+            'key': key,
+        }
+        save_config(config)
+
+        return redirect(url_for('index'))
+
 @app.route('/')
 def index():
-    return "Hello world"
+    if not config:
+        return redirect(url_for('conf'))
+
+    return redirect(url_for('events'))
+
+@app.route('/events')
+def events():
+    if not config:
+        return redirect(url_for('conf'))
+
+    events = get_events()
+
+    return render_template('events.html', events=events)
 
 if __name__ == '__main__':
     app.run()

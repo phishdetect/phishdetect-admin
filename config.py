@@ -15,30 +15,31 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import requests
+import os
+import yaml
 
-from config import config
+config_local = os.path.join(os.getenv('HOME'), '.phishdetect.conf')
+config_paths = [
+    os.path.join(os.getcwd(), 'phishdetect.conf'),
+    config_local,
+]
 
-def get_events():
-    url = '{}/api/events/fetch/'.format(config['node'])
-    res = requests.post(url, json={'key': config['key']})
+def load_config():
+    found_config = None
+    for config_path in config_paths:
+        if not os.path.exists(config_path):
+            continue
 
-    if res.status_code == 200:
-        return res.json()
-    else:
+        found_config = config_path
+
+    if not found_config:
         return None
 
-def add_indicators(indicators_type, indicators, tags=[]):
-    data = {
-        'type': indicators_type,
-        'indicators': indicators,
-        'tags': tags,
-        'key': config['key']
-    }
-    url = '{}/api/indicators/add/'.format(config['node'])
-    res = requests.post(url, json=data)
+    with open(found_config, 'r') as handle:
+        return yaml.load(handle)
 
-    if res.status_code == 200:
-        return res.json()
-    else:
-        return None
+def save_config(config):
+    with open(config_local, 'w') as handle:
+        yaml.dump(config, handle, default_flow_style=False)
+
+config = load_config()

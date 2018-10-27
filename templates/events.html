@@ -1,0 +1,9 @@
+<h1>Events</h1>
+
+{% for event in events %}
+<p>{{ event.datetime }}</p>
+<p>{{ event.type }}</p>
+<p>{{ event.indicator }}</p>
+<p>{{ event.hashed }}</p>
+<p>{{ event.target_contact }}</p>
+{% endfor %}
