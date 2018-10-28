@@ -57,5 +57,12 @@ def events():
 
     return render_template('events.html', node=config['node'], page='Events', events=events)
 
+@app.route('/indicators')
+def indicators():
+    if not config:
+        return redirect(url_for('conf'))
+
+    return render_template('indicators.html', node=config['node'], page='Indicators')
+
 if __name__ == '__main__':
     app.run()

@@ -8,8 +8,8 @@
 <div class="p-12 w-full">
     <div class="flex">
         <ul class="list-reset flex mb-8 w-full">
-            <li class="mr-6"><a class="text-blue hover:text-blue-darker no-underline" href="/events">Events</a></li>
-            <li class="mr-6"><a class="text-blue hover:text-blue-darker no-underline" href="/indicators">Indicators</a></li>
+            <li class="mr-6">{% if page == 'Events' %}<span class="text-grey-dark">Events</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/events">Events</a>{% endif %}</li>
+            <li class="mr-6">{% if page == 'Indicators' %}<span class="text-grey-dark">Indicators</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/indicators">Indicators</a>{% endif %}</li>
         </ul>
         <div class="text-grey-darker"><b>Node</b> {{ node }}</div>
     </div>
