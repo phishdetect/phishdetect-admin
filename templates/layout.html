@@ -6,13 +6,15 @@
 </head>
 <body class="bg-grey-lighter text-black">
 <div class="p-12 w-full">
-    <ul class="list-reset flex mb-8">
-        <li class="mr-6"><a class="text-blue hover:text-blue-darker no-underline" href="/events">Events</a></li>
-        <li class="mr-6"><a class="text-blue hover:text-blue-darker no-underline" href="/indicators">Indicators</a></li>
-    </ul>
+    <div class="flex">
+        <ul class="list-reset flex mb-8 w-full">
+            <li class="mr-6"><a class="text-blue hover:text-blue-darker no-underline" href="/events">Events</a></li>
+            <li class="mr-6"><a class="text-blue hover:text-blue-darker no-underline" href="/indicators">Indicators</a></li>
+        </ul>
+        <div class="text-grey-darker"><b>Node</b> {{ node }}</div>
+    </div>
 
-    <div class="text-grey-darker mb-2"><b>Node</b> {{ node }}</div>
-    <h1 class="font-normal mb-4"><b>PhishDetect</b> Admin</h1>
+    <h1 class="font-normal mb-4"><b>PhishDetect</b> Admin{% if page %} - {{ page }}{% endif %}</h1>
 
     {% block content %}{% endblock %}
 </div>

@@ -1,23 +1,21 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="border-b-2 mb-4 pb-2 font-bold">Events</div>
-
 {% if events %}
 <table class="w-full">
     <tr>
-        <th class="text-left">Datetime</th>
-        <th>Event type</th>
-        <th>Indicator</th>
-        <th>Hashed</th>
-        <th>Target Contact</th>
+        <th class="text-left pb-2 border-b-2">Datetime</th>
+        <th class="text-left pb-2 border-b-2">Event type</th>
+        <th class="text-left pb-2 border-b-2">Event Indicator</th>
+        <th class="text-left pb-2 border-b-2">Hashed</th>
+        <th class="text-left pb-2 border-b-2">Target Contact</th>
     </tr>
     {% for event in events %}
     <tr>
-        <td class="pb-4">{{ event.datetime }}</td>
-        <td class="pb-4">{{ event.type }}</td>
-        <td class="pb-4">{{ event.indicator }}</td>
-        <td class="pb-4">{{ event.hashed }}</td>
-        <td class="pb-4">{{ event.target_contact }}</td>
+        <td class="pt-4">{{ event.datetime }}</td>
+        <td class="pt-4">{{ event.type }}</td>
+        <td class="pt-4">{{ event.indicator }}</td>
+        <td class="pt-4">{{ event.hashed }}</td>
+        <td class="pt-4">{{ event.target_contact }}</td>
     </tr>
     {% endfor %}
 </table>

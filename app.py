@@ -55,7 +55,7 @@ def events():
 
     events = get_events()
 
-    return render_template('events.html', node=config['node'], events=events)
+    return render_template('events.html', node=config['node'], page='Events', events=events)
 
 if __name__ == '__main__':
     app.run()
