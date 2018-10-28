@@ -1,9 +1,27 @@
-<h1>Events</h1>
+{% extends "layout.html" %}
+{% block content %}
+<div class="border-b-2 mb-4 pb-2 font-bold">Events</div>
 
-{% for event in events %}
-<p>{{ event.datetime }}</p>
-<p>{{ event.type }}</p>
-<p>{{ event.indicator }}</p>
-<p>{{ event.hashed }}</p>
-<p>{{ event.target_contact }}</p>
-{% endfor %}
+{% if events %}
+<table class="w-full">
+    <tr>
+        <th class="text-left">Datetime</th>
+        <th>Event type</th>
+        <th>Indicator</th>
+        <th>Hashed</th>
+        <th>Target Contact</th>
+    </tr>
+    {% for event in events %}
+    <tr>
+        <td class="pb-4">{{ event.datetime }}</td>
+        <td class="pb-4">{{ event.type }}</td>
+        <td class="pb-4">{{ event.indicator }}</td>
+        <td class="pb-4">{{ event.hashed }}</td>
+        <td class="pb-4">{{ event.target_contact }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No events have been recorded yet.</p>
+{% endif %}
+{% endblock %}
