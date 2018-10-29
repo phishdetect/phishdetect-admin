@@ -57,7 +57,10 @@ def events():
     if not config:
         return redirect(url_for('conf'))
 
-    events = get_events()
+    try:
+        events = get_events()
+    except Exception as e:
+        return render_template('error.html', node=config['node'], msg="The connection to the PhishDetect Node failed: {}".format(e))
 
     return render_template('events.html', node=config['node'], page='Events', events=events)
 
@@ -83,8 +86,6 @@ def indicators():
         else:
             tags = [t.lower().strip() for t in tags_string.split(',')]
 
-        print(tags)
-
         domain_indicators = []
         email_indicators = []
         for indicator in indicators_string.split():
@@ -99,11 +100,14 @@ def indicators():
         domain_results = {}
         email_results = {}
 
-        if domain_indicators:
-            domain_results = add_indicators('domain', domain_indicators, tags)
+        try:
+            if domain_indicators:
+                domain_results = add_indicators('domain', domain_indicators, tags)
 
-        if email_indicators:
-            email_results = add_indicators('email', email_indicators, tags)
+            if email_indicators:
+                email_results = add_indicators('email', email_indicators, tags)
+        except Exception as e:
+            return render_template('error.html', node=config['node'], msg="The connection to the PhishDetect Node failed: {}".format(e))
 
         if 'error' in domain_results or 'error' in email_results:
             return render_template('indicators.html', node=config['node'], page='Indicators', error=results['error'], tags=tags_string, indicators=indicators_string)
