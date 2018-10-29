@@ -36,7 +36,6 @@ def add_indicators(indicators_type, indicators, tags=[]):
         'key': config['key']
     }
 
-    print(data)
     url = '{}/api/indicators/add/'.format(config['node'])
     res = requests.post(url, json=data)
     return res.json()

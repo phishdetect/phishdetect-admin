@@ -96,21 +96,19 @@ def indicators():
             elif get_indicator_type(indicator) == 'domain':
                 domain_indicators.append(indicator)
 
-        if domain_indicators:
-            results = add_indicators('domain', domain_indicators, tags)
+        domain_results = {}
+        email_results = {}
 
-        if 'error' in results:
-            return render_template('indicators.html', node=config['node'], page='Indicators', error=results['error'], tags=tags_string, indicators=indicators_string)
+        if domain_indicators:
+            domain_results = add_indicators('domain', domain_indicators, tags)
 
         if email_indicators:
-            results = add_indicators('email', email_indicators, tags)
+            email_results = add_indicators('email', email_indicators, tags)
 
-        if 'error' in results:
+        if 'error' in domain_results or 'error' in email_results:
             return render_template('indicators.html', node=config['node'], page='Indicators', error=results['error'], tags=tags_string, indicators=indicators_string)
 
-        msg = results.get('msg', "")
-
-        return render_template('success.html', node=config['node'], msg=msg)
+        return render_template('success.html', node=config['node'], msg="Any new indicators were added successfully")
 
 if __name__ == '__main__':
     app.run()
