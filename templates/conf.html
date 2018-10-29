@@ -1,8 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
 <form method="POST" action="/conf">
-    <input type="text" name="node" />
-    <input type="key" name="key" />
-    <input type="submit" name="submit" value="Save" />
+    <div class="mb-4">
+        <label for="node">Node:</label><br />
+        <input type="text" class="p-4 border-2 border-grey rounded-lg" name="node" value="{{ node }}" />
+    </div>
+    <div class="mb-4">
+        <label for="key">API Key:</label><br />
+        <input type="key" class="p-4 border-2 border-grey rounded-lg" name="key" value="{{ key }}" />
+    </div>
+    <div><input type="submit" class="py-4 px-6 rounded-lg bg-blue hover:bg-blue-light border-b-4 cursor-pointer border-blue-dark hover:border-blue text-white" name="submit" value="Save" /></div>
 </form>
 {% endblock %}

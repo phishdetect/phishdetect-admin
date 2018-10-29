@@ -15,28 +15,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import requests
-
-from config import config
-
-def get_events():
-    url = '{}/api/events/fetch/'.format(config['node'])
-    res = requests.post(url, json={'key': config['key']})
-
-    if res.status_code == 200:
-        return res.json()
-    else:
-        return None
-
-def add_indicators(indicators_type, indicators, tags=[]):
-    data = {
-        'type': indicators_type,
-        'indicators': indicators,
-        'tags': tags,
-        'key': config['key']
-    }
-
-    print(data)
-    url = '{}/api/indicators/add/'.format(config['node'])
-    res = requests.post(url, json=data)
-    return res.json()
+def get_indicator_type(indicator):
+	if '@' in indicator:
+		return "email"
+	else:
+		return "domain"

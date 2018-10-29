@@ -1,3 +1,17 @@
 {% extends "layout.html" %}
 {% block content %}
+{% if error %}
+<div class="mb-4 text-red"><b>Error!</b> {{ error }}</div>
+{% endif %}
+<form method="POST" action="/indicators">
+    <div class="mb-4">
+        <label for="indicators">List of comma-separated tags (optional):</label><br />
+        <input type="text" class="p-4 border-2 border-grey rounded-lg" name="tags" />
+    </div>
+    <div class="mb-4">
+        <label for="indicators">List of indicators (one per line) <b>*required</b>:</label><br />
+        <textarea name="indicators" class="p-4 border-2 border-grey rounded-lg" rows="15" cols="100"></textarea>
+    </div>
+    <div><input type="submit" class="py-4 px-6 rounded-lg bg-blue hover:bg-blue-light border-b-4 cursor-pointer border-blue-dark hover:border-blue text-white" name="submit" value="Send indicators" /></div>
+</form>
 {% endblock %}

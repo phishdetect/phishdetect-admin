@@ -19,19 +19,23 @@ from flask import Flask, render_template, request, redirect, url_for
 
 from const import *
 from config import config, load_config, save_config
-from phishdetect import get_events
+from utils import get_indicator_type
+from phishdetect import get_events, add_indicators
 
 app = Flask(__name__)
 
-@app.route('/conf', methods=['POST', 'GET'])
+@app.route('/conf', methods=['GET', 'POST'])
 def conf():
     global config
 
     if request.method == 'GET':
-        return render_template('conf.html')
+        return render_template('conf.html', page='Configuration', node=config.get('node'), key=config.get('key'))
     elif request.method == 'POST':
         node = request.form.get('node')
         key = request.form.get('key')
+
+        if node == "" or key == "":
+            return redirect(url_for('conf'))
 
         config = {
             'node': node,
@@ -57,12 +61,56 @@ def events():
 
     return render_template('events.html', node=config['node'], page='Events', events=events)
 
-@app.route('/indicators')
+@app.route('/indicators', methods=['GET', 'POST'])
 def indicators():
     if not config:
         return redirect(url_for('conf'))
 
-    return render_template('indicators.html', node=config['node'], page='Indicators')
+    if request.method == 'GET':
+        return render_template('indicators.html', node=config['node'], page='Indicators')
+    elif request.method == 'POST':
+        indicators_string = request.form.get('indicators', "")
+        tags_string = request.form.get('tags', "")
+
+        indicators_string = indicators_string.strip()
+        tags_string = tags_string.strip()
+
+        if indicators_string == "":
+            return render_template('indicators.html', node=config['node'], page='Indicators', error="You didn't provide a valid list of indicators")
+
+        if tags_string == "":
+            tags = []
+        else:
+            tags = [t.lower().strip() for t in tags_string.split(',')]
+
+        print(tags)
+
+        domain_indicators = []
+        email_indicators = []
+        for indicator in indicators_string.split():
+            indicator = indicator.replace('[.]', '.')
+            indicator = indicator.replace('[@]', '@')
+
+            if get_indicator_type(indicator) == 'email':
+                email_indicators.append(indicator)
+            elif get_indicator_type(indicator) == 'domain':
+                domain_indicators.append(indicator)
+
+        if domain_indicators:
+            results = add_indicators('domain', domain_indicators, tags)
+
+        if 'error' in results:
+            return render_template('indicators.html', node=config['node'], page='Indicators', error=results['error'], tags=tags_string, indicators=indicators_string)
+
+        if email_indicators:
+            results = add_indicators('email', email_indicators, tags)
+
+        if 'error' in results:
+            return render_template('indicators.html', node=config['node'], page='Indicators', error=results['error'], tags=tags_string, indicators=indicators_string)
+
+        msg = results.get('msg', "")
+
+        return render_template('success.html', node=config['node'], msg=msg)
 
 if __name__ == '__main__':
     app.run()
