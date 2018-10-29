@@ -59,15 +59,22 @@ def events():
     if not config:
         return redirect(url_for('conf'))
 
+    results = get_events()
+
     try:
-        events = get_events()
+        results = get_events()
     except Exception as e:
         return render_template('error.html',
             node=config['node'],
             msg="The connection to the PhishDetect Node failed: {}".format(e))
 
+    if results and 'error' in results:
+        return render_template('error.html',
+            node=config['node'],
+            msg="Unable to fetch events: {}".format(results['error']))
+
     return render_template('events.html',
-        node=config['node'], page='Events', events=events)
+        node=config['node'], page='Events', events=results)
 
 @app.route('/indicators', methods=['GET', 'POST'])
 def indicators():

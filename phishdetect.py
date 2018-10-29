@@ -22,11 +22,7 @@ from config import config
 def get_events():
     url = '{}/api/events/fetch/'.format(config['node'])
     res = requests.post(url, json={'key': config['key']})
-
-    if res.status_code == 200:
-        return res.json()
-    else:
-        return None
+    return res.json()
 
 def add_indicators(indicators_type, indicators, tags=[]):
     data = {
