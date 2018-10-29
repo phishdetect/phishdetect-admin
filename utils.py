@@ -16,6 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 def get_indicator_type(indicator):
+    # TODO: Need to write this function properly.
 	if '@' in indicator:
 		return "email"
 	else:
