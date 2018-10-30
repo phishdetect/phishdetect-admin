@@ -1,1 +1,5 @@
-# phishdetect-admin
+# PhishDetect Admin
+
+This tool is part of the PhishDetect project.
+
+This is a simple Flask web application that is meant to run locally in order to remotely connect and manage a PhishDetect Node.
