@@ -16,6 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 NODE_INDICATORS_FETCH = "/api/indicators/fetch/"
-NODE_INDICATORS_ADD = "/api/indicators/add/"
-NODE_EVENTS_FETCH = "/api/events/fetch/"
 NODE_EVENTS_ADD = "/api/events/add/"
+
+NODE_INDICATORS_ADD = "/api/admin/indicators/add/"
+NODE_EVENTS_FETCH = "/api/admin/events/fetch/"
