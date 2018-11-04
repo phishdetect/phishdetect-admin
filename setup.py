@@ -26,14 +26,14 @@ requires = (
 )
 
 setup(
-	name='phishdetect-admin',
-	version='1.0',
-	author='Claudio Guarnieri',
-	author_email='nex@nex.sx',
-	description=description,
-	long_description=description,
+    name='phishdetect-admin',
+    version='1.0',
+    author='Claudio Guarnieri',
+    author_email='nex@nex.sx',
+    description=description,
+    long_description=description,
 
-	scripts=['bin/phishdetect-admin',],
+    scripts=['bin/phishdetect-admin',],
     install_requires=requires,
     packages=['phishdetectadmin',],
     package_data={'phishdetectadmin': 'phishdetectadmin/templates/'},
