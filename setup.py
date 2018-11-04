@@ -36,9 +36,8 @@ setup(
 	scripts=['bin/phishdetect-admin',],
     install_requires=requires,
     packages=['phishdetectadmin',],
-    # package_data={'phishdetectadmin': 'phishdetectadmin/templates/'},
-    # include_package_data=True,
-    data_files=[('/usr/share/phishdetect-admin/templates/', [os.path.join('phishdetectadmin', 'templates', f) for f in os.listdir('phishdetectadmin/templates/')]),],
+    package_data={'phishdetectadmin': 'phishdetectadmin/templates/'},
+    include_package_data=True,
     zip_safe=False,
 
     keywords='security phishing phishdetect',

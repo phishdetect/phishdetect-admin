@@ -22,8 +22,7 @@ from phishdetectadmin.config import config, load_config, save_config
 from phishdetectadmin.utils import get_indicator_type
 from phishdetectadmin.api import get_events, add_indicators
 
-app = Flask(__name__,
-    template_folder='/usr/share/phishdetect-admin/templates')
+app = Flask(__name__)
 
 @app.route('/conf', methods=['GET', 'POST'])
 def conf():
