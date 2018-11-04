@@ -19,22 +19,12 @@ import os
 import yaml
 
 config = dict()
-config_local = os.path.join(os.getenv('HOME'), '.phishdetect.conf')
-config_paths = [
-    os.path.join(os.getcwd(), 'phishdetect.conf'),
-    config_local,
-]
+config_folder = os.path.join(os.getenv('HOME'), '.config', 'phishdetect')
+config_path = os.path.join(config_folder, 'phishdetect.conf')
 
 def load_config():
-    found_config = None
-    for config_path in config_paths:
-        if not os.path.exists(config_path):
-            continue
-
-        found_config = config_path
-
-    if not found_config:
-        return dict()
+    if not os.path.exists(config_path):
+        return None
 
     with open(found_config, 'r') as handle:
         return yaml.load(handle)

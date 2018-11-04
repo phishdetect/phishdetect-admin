@@ -15,13 +15,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
 import random
 import threading
 import webbrowser
 
 from phishdetectadmin.app import app
+from phishdetectadmin.config import config_folder
 
-if __name__ == '__main__':
+def logo():
     print("""
          _     _     _         _      _            _   
         | |   (_)   | |       | |    | |          | |  
@@ -37,9 +39,21 @@ A browser page will be launched in few seconds.
 You can find more information about PhishDetect at: https://phishdetect.io
     """)
 
+def main():
+    # We make sure we have the configuration folder.
+    if not os.path.exists(config_folder):
+        os.makedirs(config_folder)
+
+    # We randomize a port number to run Flask on.
     port = 5000 + random.randint(0, 999)
     url = 'http://127.0.0.1:{}'.format(port)
 
+    # We launch a browser with some delay.
     threading.Timer(1.25, lambda: webbrowser.open(url) ).start()
 
+    # We launch the Flask app.
     app.run(port=port, debug=False)
+
+if __name__ == '__main__':
+    logo()
+    main()

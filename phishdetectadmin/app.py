@@ -24,6 +24,8 @@ from phishdetectadmin.api import get_events, add_indicators
 
 app = Flask(__name__)
 
+node = None
+
 @app.route('/conf', methods=['GET', 'POST'])
 def conf():
     global config
@@ -51,6 +53,8 @@ def conf():
 def index():
     if not config:
         return redirect(url_for('conf'))
+
+    print(config)
 
     return redirect(url_for('events'))
 
