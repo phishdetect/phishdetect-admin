@@ -18,6 +18,7 @@
 import os
 import yaml
 
+config = dict()
 config_local = os.path.join(os.getenv('HOME'), '.phishdetect.conf')
 config_paths = [
     os.path.join(os.getcwd(), 'phishdetect.conf'),
@@ -33,7 +34,7 @@ def load_config():
         found_config = config_path
 
     if not found_config:
-        return None
+        return dict()
 
     with open(found_config, 'r') as handle:
         return yaml.load(handle)

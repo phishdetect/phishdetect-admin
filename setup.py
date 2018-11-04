@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
 from setuptools import setup
 
 description = "Web application to administer a PhishDetect Node"
@@ -25,7 +26,6 @@ requires = (
 )
 
 setup(
-    app='app.py',
 	name='phishdetect-admin',
 	version='1.0',
 	author='Claudio Guarnieri',
@@ -33,9 +33,13 @@ setup(
 	description=description,
 	long_description=description,
 
-	platform='any',
-	scripts='',
+	scripts=['bin/phishdetect-admin',],
     install_requires=requires,
+    packages=['phishdetectadmin',],
+    # package_data={'phishdetectadmin': 'phishdetectadmin/templates/'},
+    # include_package_data=True,
+    data_files=[('/usr/share/phishdetect-admin/templates/', [os.path.join('phishdetectadmin', 'templates', f) for f in os.listdir('phishdetectadmin/templates/')]),],
+    zip_safe=False,
 
     keywords='security phishing phishdetect',
     license='GPLv3',

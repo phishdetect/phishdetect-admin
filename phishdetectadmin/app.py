@@ -17,12 +17,13 @@
 
 from flask import Flask, render_template, request, redirect, url_for
 
-from const import *
-from config import config, load_config, save_config
-from utils import get_indicator_type
-from phishdetect import get_events, add_indicators
+from phishdetectadmin.const import *
+from phishdetectadmin.config import config, load_config, save_config
+from phishdetectadmin.utils import get_indicator_type
+from phishdetectadmin.api import get_events, add_indicators
 
-app = Flask(__name__)
+app = Flask(__name__,
+    template_folder='/usr/share/phishdetect-admin/templates')
 
 @app.route('/conf', methods=['GET', 'POST'])
 def conf():
@@ -30,8 +31,8 @@ def conf():
 
     if request.method == 'GET':
         return render_template('conf.html',
-            page='Configuration', node=config.get('node'),
-            key=config.get('key'))
+            page='Configuration', node=config.get('node', ''),
+            key=config.get('key', ''))
     elif request.method == 'POST':
         node = request.form.get('node')
         key = request.form.get('key')
@@ -81,9 +82,11 @@ def indicators():
     if not config:
         return redirect(url_for('conf'))
 
+    # Get the form to add indicators.
     if request.method == 'GET':
         return render_template('indicators.html',
             node=config['node'], page='Indicators')
+    # Process new indicators to be added.
     elif request.method == 'POST':
         indicators_string = request.form.get('indicators', "")
         tags_string = request.form.get('tags', "")
@@ -133,6 +136,3 @@ def indicators():
 
         return render_template('success.html',
             node=config['node'], msg="Any new indicators were added successfully")
-
-if __name__ == '__main__':
-    app.run()

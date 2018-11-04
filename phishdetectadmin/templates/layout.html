@@ -11,7 +11,16 @@
             <li class="mr-6">{% if page == 'Events' %}<span class="text-grey-dark">Events</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/events">Events</a>{% endif %}</li>
             <li class="mr-6">{% if page == 'Indicators' %}<span class="text-grey-dark">Indicators</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/indicators">Indicators</a>{% endif %}</li>
         </ul>
-        <div class="text-grey-darker"><b>Node</b> {{ node }}</div>
+        <div class="text-grey-darker">
+            <b>Node</b>
+            <form method="POST" action="/node">
+                <select name="node">
+                    {% for node in nodes %}
+                    <option>{{ node }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
     </div>
 
     <h1 class="font-normal mb-6"><b>PhishDetect</b> Admin{% if page %} - {{ page }}{% endif %}</h1>

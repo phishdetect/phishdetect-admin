@@ -17,7 +17,7 @@
 
 import requests
 
-from config import config
+from phishdetectadmin.config import config
 
 def get_events():
     url = '{}/api/events/fetch/'.format(config['node'])
