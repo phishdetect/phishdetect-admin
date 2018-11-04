@@ -2,7 +2,7 @@
 {% block content %}
 <h2 class="mb-4">Select a node</h2 class="mb-4">
 <form method="POST" action="/node">
-    <select name="host" class="p-4 rounded-lg">
+    <select name="host" class="p-4 rounded-lg bg-grey-light">
         {% for node in nodes %}
         <option>{{ node.host }}</option>
         {% endfor %}

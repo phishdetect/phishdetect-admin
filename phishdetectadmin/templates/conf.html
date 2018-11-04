@@ -2,11 +2,9 @@
 {% block content %}
 <h2 class="mb-4">Currently configured nodes</h2 class="mb-4">
 {% if nodes %}
-<ul class="mb-8">
     {% for node in nodes %}
-    <li><b>Host:</b> {{ node.host }} <b>Key:</b> {{ node.key }}</li>
+    <div class="mb-4 p-4 bg-grey-light rounded-lg"><b>Host:</b> {{ node.host }} <b>Key:</b> {{ node.key }}</div>
     {% endfor %}
-</ul>
 {% else %}
 <div>No PhishDetect Nodes have been configured yet.</div>
 {% endif %}
