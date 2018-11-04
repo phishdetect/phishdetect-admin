@@ -18,50 +18,78 @@
 from flask import Flask, render_template, request, redirect, url_for
 
 from phishdetectadmin.const import *
-from phishdetectadmin.config import config, load_config, save_config
+from phishdetectadmin.config import load_config, save_config
 from phishdetectadmin.utils import get_indicator_type
 from phishdetectadmin.api import get_events, add_indicators
 
-app = Flask(__name__)
+import phishdetectadmin.session as session
 
-node = None
+app = Flask(__name__)
 
 @app.route('/conf', methods=['GET', 'POST'])
 def conf():
-    global config
-
     if request.method == 'GET':
-        return render_template('conf.html',
-            page='Configuration', node=config.get('node', ''),
-            key=config.get('key', ''))
+        nodes = []
+        config = load_config()
+        if config:
+            nodes = config['nodes']
+
+        return render_template('conf.html', page='Configuration', nodes=nodes)
     elif request.method == 'POST':
-        node = request.form.get('node')
+        host = request.form.get('host')
         key = request.form.get('key')
 
-        if node == "" or key == "":
+        if host == "" or key == "":
             return redirect(url_for('conf'))
 
-        config = {
-            'node': node,
+        config = load_config()
+        if not config:
+            config = {'nodes': []}
+
+        config['nodes'].append({
+            'host': host,
+            'key': key,
+        })
+        save_config(config)
+
+        return redirect(url_for('index'))
+
+@app.route('/node', methods=['GET', 'POST'])
+def node():
+    config = load_config()
+    if request.method == 'GET':
+        if not config:
+            return redirect(url_for('conf'))
+
+        nodes = config['nodes']
+        return render_template('node.html', page='Node Selection', nodes=nodes)
+    elif request.method == 'POST':
+        host = request.form.get('host')
+
+        key = ''
+        for node in config['nodes']:
+            if node['host'] == host:
+                key = node['key']
+                break
+
+        session.__node__ = {
+            'host': host,
             'key': key,
         }
-        save_config(config)
 
         return redirect(url_for('index'))
 
 @app.route('/')
 def index():
-    if not config:
-        return redirect(url_for('conf'))
-
-    print(config)
+    if not session.__node__:
+        return redirect(url_for('node'))
 
     return redirect(url_for('events'))
 
 @app.route('/events')
 def events():
-    if not config:
-        return redirect(url_for('conf'))
+    if not session.__node__:
+        return redirect(url_for('node'))
 
     results = get_events()
 
@@ -69,26 +97,23 @@ def events():
         results = get_events()
     except Exception as e:
         return render_template('error.html',
-            node=config['node'],
             msg="The connection to the PhishDetect Node failed: {}".format(e))
 
     if results and 'error' in results:
         return render_template('error.html',
-            node=config['node'],
             msg="Unable to fetch events: {}".format(results['error']))
 
     return render_template('events.html',
-        node=config['node'], page='Events', events=results)
+        node=session.__node__['host'], page='Events', events=results)
 
 @app.route('/indicators', methods=['GET', 'POST'])
 def indicators():
-    if not config:
-        return redirect(url_for('conf'))
+    if not session.__node__:
+        return redirect(url_for('node'))
 
     # Get the form to add indicators.
     if request.method == 'GET':
-        return render_template('indicators.html',
-            node=config['node'], page='Indicators')
+        return render_template('indicators.html', page='Indicators')
     # Process new indicators to be added.
     elif request.method == 'POST':
         indicators_string = request.form.get('indicators', "")
@@ -99,7 +124,7 @@ def indicators():
 
         if indicators_string == "":
             return render_template('indicators.html',
-                node=config['node'], page='Indicators',
+                page='Indicators',
                 error="You didn't provide a valid list of indicators")
 
         if tags_string == "":
@@ -129,13 +154,12 @@ def indicators():
                 email_results = add_indicators('email', email_indicators, tags)
         except Exception as e:
             return render_template('error.html',
-                node=config['node'],
                 msg="The connection to the PhishDetect Node failed: {}".format(e))
 
         if 'error' in domain_results or 'error' in email_results:
             return render_template('indicators.html',
-                node=config['node'], page='Indicators', error=results['error'],
+                page='Indicators', error=results['error'],
                 tags=tags_string, indicators=indicators_string)
 
         return render_template('success.html',
-            node=config['node'], msg="Any new indicators were added successfully")
+            msg="Any new indicators were added successfully")

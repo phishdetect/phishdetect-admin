@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2 class="mb-4">Select a node</h2 class="mb-4">
+<form method="POST" action="/node">
+    <select name="host" class="p-4 rounded-lg">
+        {% for node in nodes %}
+        <option>{{ node.host }}</option>
+        {% endfor %}
+    </select>
+    <div class="mt-4"><input type="submit" class="py-4 px-6 rounded-lg bg-blue hover:bg-blue-light border-b-4 cursor-pointer border-blue-dark hover:border-blue text-white" name="submit" value="Select" /></div>
+</form>
+{% endblock %}

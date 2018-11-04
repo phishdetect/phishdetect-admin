@@ -17,11 +17,11 @@
 
 import requests
 
-from phishdetectadmin.config import config
+import phishdetectadmin.session as session
 
 def get_events():
-    url = '{}/api/events/fetch/'.format(config['node'])
-    res = requests.post(url, json={'key': config['key']})
+    url = '{}/api/events/fetch/'.format(session.__node__['host'])
+    res = requests.post(url, json={'key': session.__node__['key']})
     return res.json()
 
 def add_indicators(indicators_type, indicators, tags=[]):
@@ -29,9 +29,9 @@ def add_indicators(indicators_type, indicators, tags=[]):
         'type': indicators_type,
         'indicators': indicators,
         'tags': tags,
-        'key': config['key']
+        'key': session.__node__['key']
     }
 
-    url = '{}/api/indicators/add/'.format(config['node'])
+    url = '{}/api/indicators/add/'.format(session.__node__['host'])
     res = requests.post(url, json=data)
     return res.json()

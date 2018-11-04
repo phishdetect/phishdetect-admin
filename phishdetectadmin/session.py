@@ -15,19 +15,4 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
-import yaml
-
-config_folder = os.path.join(os.getenv('HOME'), '.config', 'phishdetect')
-config_path = os.path.join(config_folder, 'config')
-
-def load_config():
-    if not os.path.exists(config_path):
-        return None
-
-    with open(config_path, 'r') as handle:
-        return yaml.load(handle)
-
-def save_config(config):
-    with open(config_path, 'w') as handle:
-        yaml.dump(config, handle, default_flow_style=False)
+__node__ = None
