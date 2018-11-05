@@ -15,9 +15,29 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import re
+from urllib.parse import urlparse
+
 def get_indicator_type(indicator):
-    # TODO: Need to write this function properly.
-	if '@' in indicator:
-		return "email"
-	else:
-		return "domain"
+    # TODO: Verify regex.
+    email_regex = re.compile(r'[^@]+@[^@]+\.[^@]+')
+    if email_regex.fullmatch(indicator):
+        return 'email'
+
+    # TODO: Verify regex.
+    domain_regex = re.compile(r'[a-zA-Z\d-]{,63}(\.[a-zA-Z\d-]{,63})*')
+    if domain_regex.fullmatch(indicator):
+        return 'domain'
+
+    return None
+
+def clean_indicator(indicator):
+    indicator = indicator.strip()
+    indicator = indicator.lower()
+    indicator = indicator.replace('[.]', '.')
+    indicator = indicator.replace('[@]', '@')
+    return indicator
+
+def extract_domain(url):
+    parsed_url = urlparse(url)
+    return parsed_url.netloc

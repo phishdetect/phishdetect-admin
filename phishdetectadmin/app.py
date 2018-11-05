@@ -19,9 +19,8 @@ from flask import Flask, render_template, request, redirect, url_for
 
 from phishdetectadmin.const import *
 from phishdetectadmin.config import load_config, save_config
-from phishdetectadmin.utils import get_indicator_type
+from phishdetectadmin.utils import get_indicator_type, clean_indicator, extract_domain
 from phishdetectadmin.api import get_events, add_indicators
-
 import phishdetectadmin.session as session
 
 app = Flask(__name__)
@@ -113,7 +112,11 @@ def indicators():
 
     # Get the form to add indicators.
     if request.method == 'GET':
-        return render_template('indicators.html', page='Indicators')
+        ioc = request.args.get('ioc', None)
+        if ioc:
+            ioc = extract_domain(ioc)
+
+        return render_template('indicators.html', indicators=ioc, page='Indicators')
     # Process new indicators to be added.
     elif request.method == 'POST':
         indicators_string = request.form.get('indicators', "")
@@ -135,13 +138,12 @@ def indicators():
         domain_indicators = []
         email_indicators = []
         for indicator in indicators_string.split():
-            indicator = indicator.replace('[.]', '.')
-            indicator = indicator.replace('[@]', '@')
+            indicator_clean = clean_indicator(indicator)
 
-            if get_indicator_type(indicator) == 'email':
-                email_indicators.append(indicator)
-            elif get_indicator_type(indicator) == 'domain':
-                domain_indicators.append(indicator)
+            if get_indicator_type(indicator_clean) == 'email':
+                email_indicators.append(indicator_clean)
+            elif get_indicator_type(indicator_clean) == 'domain':
+                domain_indicators.append(indicator_clean)
 
         domain_results = {}
         email_results = {}

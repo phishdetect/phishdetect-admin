@@ -10,7 +10,7 @@
     </div>
     <div class="mb-4">
         <label for="indicators">List of indicators (one per line) <b>*required</b>:</label><br />
-        <textarea name="indicators" class="p-4 border-2 border-grey rounded-lg" rows="15" cols="100"></textarea>
+        <textarea name="indicators" class="p-4 border-2 border-grey rounded-lg" rows="15" cols="100">{% if indicators %}{{ indicators }}{% endif %}</textarea>
     </div>
     <div><input type="submit" class="py-4 px-6 rounded-lg bg-blue hover:bg-blue-light border-b-4 cursor-pointer border-blue-dark hover:border-blue text-white" name="submit" value="Send indicators" /></div>
 </form>
