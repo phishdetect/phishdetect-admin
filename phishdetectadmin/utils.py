@@ -36,6 +36,11 @@ def clean_indicator(indicator):
     indicator = indicator.lower()
     indicator = indicator.replace('[.]', '.')
     indicator = indicator.replace('[@]', '@')
+
+    # We strip www if it's a domain.
+    if get_indicator_type(indicator) == 'domain' and indicator.startswith('www.'):
+        indicator = indicator[4:]
+
     return indicator
 
 def extract_domain(url):
