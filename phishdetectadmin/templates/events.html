@@ -6,20 +6,20 @@
         <th class="text-left pb-2 border-b-2">Datetime</th>
         <th class="text-left pb-2 border-b-2">User Contact</th>
         <th class="text-left pb-2 border-b-2">Event type</th>
-        <th class="text-left pb-2 border-b-2">Event Indicator</th>
-        <th class="text-left pb-2 border-b-2">Matched Indicator</th>
+        <th class="text-left pb-2 border-b-2">Match</th>
+        <th class="text-left pb-2 border-b-2">Indicator</th>
     </tr>
     {% for event in events %}
     <tr>
         <td class="pt-4">{{ event.datetime }}</td>
         <td class="pt-4">{{ event.user_contact }}</td>
         <td class="pt-4">{{ event.type }}</td>
-        <td class="pt-4">{{ event.indicator }}</td>
+        <td class="pt-4">{{ event.match }}</td>
         <td class="pt-4">
-        {% if event.hashed %}
-            {{ event.hashed }}
+        {% if event.indicator %}
+            {{ event.indicator }}
         {% else %}
-            <a class="mb-2 p-2 rounded-lg bg-blue hover:bg-blue-light border-b-4 cursor-pointer border-blue-dark hover:border-blue text-white text-sm no-underline" href="/indicators?ioc={{ event.indicator }}">Add to indicators</a>
+            <a class="mb-2 p-2 rounded-lg bg-blue hover:bg-blue-light border-b-4 cursor-pointer border-blue-dark hover:border-blue text-white text-sm no-underline" href="/indicators?ioc={{ event.match }}">Add match to indicators</a>
         {% endif %}
         </td>
     </tr>
