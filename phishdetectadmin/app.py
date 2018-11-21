@@ -148,12 +148,15 @@ def indicators():
         domain_results = {}
         email_results = {}
 
+        total = 0
         try:
             if domain_indicators:
                 domain_results = add_indicators('domain', domain_indicators, tags)
+                total += domain_results['counter']
 
             if email_indicators:
                 email_results = add_indicators('email', email_indicators, tags)
+                total += email_results['counter']
         except Exception as e:
             return render_template('error.html',
                 msg="The connection to the PhishDetect Node failed: {}".format(e))
@@ -163,5 +166,5 @@ def indicators():
                 page='Indicators', error=results['error'],
                 tags=tags_string, indicators=indicators_string)
 
-        return render_template('success.html',
-            msg="Any new indicators were added successfully")
+        msg = "Added {} new indicators successfully!".format(total)
+        return render_template('success.html', msg=msg)
