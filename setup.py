@@ -37,7 +37,7 @@ setup(
     install_requires=requires,
     packages=['phishdetectadmin',],
     package_data={'phishdetectadmin': 'phishdetectadmin/templates/*.html'},
-    data_files=[('/phishdetectadmin/templates', [os.path.join('phishdetectadmin', 'templates', f) for f in os.listdir('phishdetectadmin/templates/')])],
+    data_files=[('phishdetectadmin/templates', [os.path.join('phishdetectadmin', 'templates', f) for f in os.listdir('phishdetectadmin/templates/')])],
 
     zip_safe=False,
 
