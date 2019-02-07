@@ -103,8 +103,8 @@ def events():
 
     final = []
     for result in results:
-        date = datetime.datetime.strptime(result['datetime'], '%Y-%m-%dT%H:%M:%S.%f%z')
-        result['date'] = date.strftime("%Y:%m:%d %H:%M:%S UTC")
+        date = datetime.datetime.strptime(result['datetime'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        result['datetime'] = date.strftime("%Y-%m-%d %H:%M:%S UTC")
         final.append(result)
 
     final.reverse()
