@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import datetime
 from flask import Flask, render_template, request, redirect, url_for
 
 from phishdetectadmin.const import *
@@ -90,8 +91,6 @@ def events():
     if not session.__node__:
         return redirect(url_for('node'))
 
-    results = get_events()
-
     try:
         results = get_events()
     except Exception as e:
@@ -102,8 +101,16 @@ def events():
         return render_template('error.html',
             msg="Unable to fetch events: {}".format(results['error']))
 
+    final = []
+    for result in results:
+        date = datetime.datetime.strptime(result['datetime'], '%Y-%m-%dT%H:%M:%S.%f%z')
+        result['date'] = date.strftime("%Y:%m:%d %H:%M:%S UTC")
+        final.append(result)
+
+    final.reverse()
+
     return render_template('events.html',
-        node=session.__node__['host'], page='Events', events=results)
+        node=session.__node__['host'], page='Events', events=final)
 
 @app.route('/indicators', methods=['GET', 'POST'])
 def indicators():
