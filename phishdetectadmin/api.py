@@ -35,3 +35,13 @@ def add_indicators(indicators_type, indicators, tags=[]):
     url = '{}/api/indicators/add/'.format(session.__node__['host'])
     res = requests.post(url, json=data)
     return res.json()
+
+def get_indicator_details(indicator):
+    data = {
+        'indicator': indicator,
+        'key': session.__node__['key']
+    }
+
+    url = '{}/api/indicators/details/'.format(session.__node__['host'])
+    res = requests.post(url, json=data)
+    return res.json()

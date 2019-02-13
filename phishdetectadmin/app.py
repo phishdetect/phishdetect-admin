@@ -21,7 +21,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from phishdetectadmin.const import *
 from phishdetectadmin.config import load_config, save_config
 from phishdetectadmin.utils import get_indicator_type, clean_indicator, extract_domain
-from phishdetectadmin.api import get_events, add_indicators
+from phishdetectadmin.api import get_events, add_indicators, get_indicator_details
 import phishdetectadmin.session as session
 
 app = Flask(__name__)
@@ -191,3 +191,12 @@ def indicators():
 
         msg = "Added {} new indicators successfully!".format(total)
         return render_template('success.html', msg=msg)
+
+@app.route('/indicator/<string:ioc>', methods=['GET',])
+def details(ioc):
+    if not session.__node__:
+        return redirect(url_for('node'))
+
+    details = get_indicator_details(ioc)
+    return render_template('indicator.html',
+        node=session.__node__['host'], page='Indicator Details', details=details)

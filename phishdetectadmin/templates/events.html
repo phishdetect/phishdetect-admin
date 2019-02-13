@@ -31,7 +31,7 @@
                 <td class="font-bold p-2">Indicator</td>
                 <td class="p-2">
                 {% if event.indicator %}
-                    {{ event.indicator }}
+                    <a href="/indicator/{{ event.indicator }}">{{ event.indicator }}</a>
                 {% else %}
                     <a href="/indicators?ioc={{ event.match }}">Add match to indicators</a>
                 {% endif %}

@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="p-2 mb-8 w-full rounded-lg bg-grey-lighter border-l-8 border-blue-lighter">
+    <table>
+        <tr>
+            <td class="font-bold p-2">Original:</td>
+            <td class="p-2">{{ details.original }}</td>
+        </tr>
+        <tr>
+            <td class="font-bold p-2">Hashed:</td>
+            <td class="p-2">{{ details.hashed }}</td>
+        </tr>
+        <tr>
+            <td class="font-bold p-2">Tags:</td>
+            <td class="p-2">{% for tag in details.tags %}{{ tag }} {% endfor %}</td>
+        </tr>
+        <tr>
+            <td class="font-bold p-2">Owner:</td>
+            <td class="p-2">{{ details.owner }}</td>
+        </tr>
+        <tr>
+            <td class="font-bold p-2">Creation date:</td>
+            <td class="p-2">{{ details.datetime }}</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}
