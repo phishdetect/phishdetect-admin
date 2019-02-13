@@ -2,40 +2,43 @@
 {% block content %}
 {% if events %}
     {% for event in events %}
-    <table class="mb-8 w-full rounded-lg bg-grey-lighter">
-        <tr>
-            <td class="font-bold p-2">Date</td>
-            <td class="p-2">{{ event.datetime }}</td>
-        </tr>
-        <tr>
-            <td class="font-bold p-2">User</td>
-            <td class="p-2">{% if event.user_contact %}{{ event.user_contact }}{% else %}n/a{% endif %}</td>
-        </tr>
-        <tr>
-            <td class="font-bold p-2">Event Type</td>
-            <td class="p-2">
-                {% if event.type == "email_sender" %}The user received an <b>email</b> from a malicious sender
-                {% elif event.type == "email_link" %}The user received an <b>email</b> containing a malicious link
-                {% elif event.type == "website_visit" %}The user tried to visit a <b>malicious website</b>
-                {% else %}{{ event.type }}
+    <div class="p-2 mb-8 w-full rounded-lg bg-grey-lighter border-l-8 border-blue-lighter">
+        <table>
+            <tr>
+                <td class="font-bold p-2">Date</td>
+                <td class="p-2">{{ event.datetime }}</td>
+            </tr>
+            <tr>
+                <td class="font-bold p-2">User</td>
+                <td class="p-2">{% if event.user_contact %}{{ event.user_contact }}{% else %}n/a{% endif %}</td>
+            </tr>
+            <tr>
+                <td class="font-bold p-2">Event Type</td>
+                <td class="p-2">
+                    {% if event.type == "email_sender" or event.type == "email_sender_domain" %}The user received an <b>email</b> from a malicious sender
+                    {% elif event.type == "email_link" %}The user received an <b>email</b> containing a malicious link
+                    {% elif event.type == "website_visit" %}The user tried to visit a <b>malicious website</b>
+                    {% elif event.type == "analysis" %}The user <b>scanned a page</b> that appeared suspicious
+                    {% else %}{{ event.type }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold p-2">Match</td>
+                <td class="p-2 font-mono break-words">{{ event.match }}</td>
+            </tr>
+            <tr>
+                <td class="font-bold p-2">Indicator</td>
+                <td class="p-2">
+                {% if event.indicator %}
+                    {{ event.indicator }}
+                {% else %}
+                    <a href="/indicators?ioc={{ event.match }}">Add match to indicators</a>
                 {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <td class="font-bold p-2">Match</td>
-            <td class="p-2 font-mono">{{ event.match }}</td>
-        </tr>
-        <tr>
-            <td class="font-bold p-2">Indicator</td>
-            <td class="p-2">
-            {% if event.indicator %}
-                {{ event.indicator }}
-            {% else %}
-                <a class="rounded-lg bg-blue hover:bg-blue-light border-b-4 cursor-pointer border-blue-dark hover:border-blue text-white text-sm no-underline" href="/indicators?ioc={{ event.match }}">Add match to indicators</a>
-            {% endif %}
-            </td>
-        </tr>
-    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
     {% endfor %}
 {% else %}
 <p>No events have been recorded yet.</p>
