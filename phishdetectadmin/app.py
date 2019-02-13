@@ -103,8 +103,24 @@ def events():
 
     final = []
     for result in results:
-        date = datetime.datetime.strptime(result['datetime'], '%Y-%m-%dT%H:%M:%S.%fZ')
-        result['datetime'] = date.strftime("%Y-%m-%d %H:%M:%S UTC")
+        patterns = [
+            '%Y-%m-%dT%H:%M:%S.%f%z',
+            '%Y-%m-%dT%H:%M:%S.%f%Z',
+            '%Y-%m-%dT%H:%M:%S.%fZ',
+        ]
+
+        date = None
+        for pattern in patterns:
+            try:
+                date = datetime.datetime.strptime(result['datetime'], pattern)
+            except ValueError:
+                continue
+            else:
+                break
+
+        if date:
+            result['datetime'] = date.strftime("%Y-%m-%d %H:%M:%S %Z")
+
         final.append(result)
 
     final.reverse()
