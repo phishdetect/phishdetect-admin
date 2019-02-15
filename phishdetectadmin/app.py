@@ -19,7 +19,7 @@ import datetime
 from flask import Flask, render_template, request, redirect, url_for
 
 from phishdetectadmin.const import *
-from phishdetectadmin.config import load_config, save_config
+from phishdetectadmin.config import load_config, save_config, load_archived_events, archive_event
 from phishdetectadmin.utils import get_indicator_type, clean_indicator, extract_domain
 from phishdetectadmin.api import get_events, add_indicators, get_indicator_details
 import phishdetectadmin.session as session
@@ -86,6 +86,20 @@ def index():
 
     return redirect(url_for('events'))
 
+@app.route('/events/archive')
+def events_archive():
+    if not session.__node__:
+        return redirect(url_for('node'))
+
+    uuid = request.args.get('uuid', None)
+    if not uuid:
+        return redirect(url_for('events'))
+
+    archive_event(uuid)
+
+    return redirect(url_for('events'))
+
+
 @app.route('/events')
 def events():
     if not session.__node__:
@@ -101,6 +115,9 @@ def events():
         return render_template('error.html',
             msg="Unable to fetch events: {}".format(results['error']))
 
+    archived = request.args.get('archived', None)
+
+    archived_events = load_archived_events()
     final = []
     for result in results:
         patterns = [
@@ -121,12 +138,17 @@ def events():
         if date:
             result['datetime'] = date.strftime("%Y-%m-%d %H:%M:%S %Z")
 
-        final.append(result)
+        if archived:
+            if result['uuid'] in archived_events:
+                final.append(result)
+        else:
+            if result['uuid'] not in archived_events:
+                final.append(result)
 
     final.reverse()
 
     return render_template('events.html',
-        node=session.__node__['host'], page='Events', events=final)
+        node=session.__node__['host'], page='Events', events=final, archived=archived)
 
 @app.route('/indicators', methods=['GET', 'POST'])
 def indicators():

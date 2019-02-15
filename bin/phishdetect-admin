@@ -21,7 +21,7 @@ import threading
 import webbrowser
 
 from phishdetectadmin.app import app
-from phishdetectadmin.config import config_folder
+from phishdetectadmin.config import storage_folder
 
 def logo():
     print("""
@@ -41,8 +41,8 @@ You can find more information about PhishDetect at: https://phishdetect.io
 
 def main():
     # We make sure we have the configuration folder.
-    if not os.path.exists(config_folder):
-        os.makedirs(config_folder)
+    if not os.path.exists(storage_folder):
+        os.makedirs(storage_folder)
 
     # We randomize a port number to run Flask on.
     port = 5000 + random.randint(0, 999)
