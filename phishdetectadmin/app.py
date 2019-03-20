@@ -21,7 +21,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from phishdetectadmin.const import *
 from phishdetectadmin.config import load_config, save_config, load_archived_events, archive_event
 from phishdetectadmin.utils import get_indicator_type, clean_indicator, extract_domain
-from phishdetectadmin.api import get_events, add_indicators, get_indicator_details
+from phishdetectadmin.api import get_events, add_indicators, get_indicator_details, get_raw_messages
 import phishdetectadmin.session as session
 
 app = Flask(__name__)
@@ -215,10 +215,23 @@ def indicators():
         return render_template('success.html', msg=msg)
 
 @app.route('/indicator/<string:ioc>', methods=['GET',])
-def details(ioc):
+def indicator(ioc):
     if not session.__node__:
         return redirect(url_for('node'))
 
     details = get_indicator_details(ioc)
     return render_template('indicator.html',
         node=session.__node__['host'], page='Indicator Details', details=details)
+
+@app.route('/raw', methods=['GET',])
+def raw():
+    if not session.__node__:
+        return redirect(url_for('node'))
+
+    results = get_raw_messages()
+    if 'error' in results:
+        return render_template('error.html',
+            msg="Unable to fetch raw messages: {}".format(results['error']))
+
+    return render_template('raw.html',
+        node=session.__node__['host'], page='Raw Messages', messages=results)

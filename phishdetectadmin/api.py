@@ -45,3 +45,10 @@ def get_indicator_details(indicator):
     url = '{}/api/indicators/details/'.format(session.__node__['host'])
     res = requests.post(url, json=data)
     return res.json()
+
+def get_raw_messages():
+    url = '{}/api/raw/fetch/'.format(session.__node__['host'])
+    res = requests.post(url, json={'key': session.__node__['key']})
+    return res.json()
+
+# def get_raw_details(uuid):
