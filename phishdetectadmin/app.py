@@ -21,12 +21,13 @@ from flask import Flask, render_template, request, redirect, url_for
 from phishdetectadmin.const import *
 from phishdetectadmin.config import load_config, save_config, load_archived_events, archive_event
 from phishdetectadmin.utils import get_indicator_type, clean_indicator, extract_domain
-from phishdetectadmin.api import get_events, add_indicators, get_indicator_details, get_raw_messages
+from phishdetectadmin.api import get_events, add_indicators, get_indicator_details
+from phishdetectadmin.api import get_raw_messages, get_raw_details
 import phishdetectadmin.session as session
 
 app = Flask(__name__)
 
-@app.route('/conf', methods=['GET', 'POST'])
+@app.route('/conf/', methods=['GET', 'POST'])
 def conf():
     if request.method == 'GET':
         nodes = []
@@ -54,7 +55,7 @@ def conf():
 
         return redirect(url_for('index'))
 
-@app.route('/node', methods=['GET', 'POST'])
+@app.route('/node/', methods=['GET', 'POST'])
 def node():
     config = load_config()
     if request.method == 'GET':
@@ -100,7 +101,7 @@ def events_archive():
     return redirect(url_for('events'))
 
 
-@app.route('/events')
+@app.route('/events/')
 def events():
     if not session.__node__:
         return redirect(url_for('node'))
@@ -150,7 +151,7 @@ def events():
     return render_template('events.html',
         node=session.__node__['host'], page='Events', events=final, archived=archived)
 
-@app.route('/indicators', methods=['GET', 'POST'])
+@app.route('/indicators/', methods=['GET', 'POST'])
 def indicators():
     if not session.__node__:
         return redirect(url_for('node'))
@@ -223,15 +224,30 @@ def indicator(ioc):
     return render_template('indicator.html',
         node=session.__node__['host'], page='Indicator Details', details=details)
 
-@app.route('/raw', methods=['GET',])
-def raw():
+@app.route('/raws/', methods=['GET',])
+def raws():
     if not session.__node__:
         return redirect(url_for('node'))
 
     results = get_raw_messages()
+    results.reverse()
+
     if 'error' in results:
         return render_template('error.html',
             msg="Unable to fetch raw messages: {}".format(results['error']))
 
-    return render_template('raw.html',
+    return render_template('raws.html',
         node=session.__node__['host'], page='Raw Messages', messages=results)
+
+@app.route('/raw/<string:uuid>', methods=['GET',])
+def raw(uuid):
+    if not session.__node__:
+        return redirect(url_for('node'))
+
+    results = get_raw_details(uuid)
+    if 'error' in results:
+        return render_template('error.html',
+            msg="Unable to fetch raw message details: {}".format(results['error']))
+
+    return render_template('raw.html',
+        node=session.__node__['host'], page='Raw Message', message=results)

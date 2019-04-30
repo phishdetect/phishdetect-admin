@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="mt-2 mb-4">
+{% if messages %}
+    <table class="w-full p-0 m-0">
+        <tr>
+            <th class="text-left p-4 pt-0 border-b-4 border-grey-lighter">Date</th>
+            <th class="text-left p-4 pt-0 border-b-4 border-grey-lighter">User</th>
+            <th class="text-left p-4 pt-0 border-b-4 border-grey-lighter">Message Type</th>
+            <th class="text-left p-4 pt-0 border-b-4 border-grey-lighter">UUID</th>
+        </tr>
+        {% for message in messages %}
+        <tr>
+            <td class="break-words text-left pt-3 p-4 border-b border-grey-lighter">{{ message.datetime }}</td>
+            <td class="break-words text-left pt-3 p-4 border-b border-grey-lighter">{{ message.user_contact }}</td>
+            <td class="break-words text-left pt-3 p-4 border-b border-grey-lighter">{{ message.type }}</td>
+            <td class="break-words text-left pt-3 p-4 border-b border-grey-lighter"><a href="/raw/{{ message.uuid }}">{{ message.uuid }}</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+<p>No new messages have been recorded yet.</p>
+{% endif %}
+</div>
+{% endblock %}
