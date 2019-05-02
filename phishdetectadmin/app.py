@@ -18,12 +18,11 @@
 import datetime
 from flask import Flask, render_template, request, redirect, url_for
 
-from phishdetectadmin.const import *
-from phishdetectadmin.config import load_config, save_config, load_archived_events, archive_event
-from phishdetectadmin.utils import get_indicator_type, clean_indicator, extract_domain
-from phishdetectadmin.api import get_events, add_indicators, get_indicator_details
-from phishdetectadmin.api import get_raw_messages, get_raw_details
-import phishdetectadmin.session as session
+from .config import load_config, save_config, load_archived_events, archive_event
+from .utils import get_indicator_type, clean_indicator, extract_domain
+from .api import get_events, add_indicators, get_indicator_details
+from .api import get_raw_messages, get_raw_details
+from . import session
 
 app = Flask(__name__)
 

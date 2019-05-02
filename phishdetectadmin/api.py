@@ -17,11 +17,22 @@
 
 import requests
 
-import phishdetectadmin.session as session
+from .const import *
+from . import session
 
 def get_events():
-    url = '{}/api/events/fetch/'.format(session.__node__['host'])
+    url = '{}{}'.format(session.__node__['host'], NODE_EVENTS_FETCH)
     res = requests.post(url, json={'key': session.__node__['key']})
+    return res.json()
+
+def get_raw_messages():
+    url = '{}{}'.format(session.__node__['host'], NODE_RAW_FETCH)
+    res = requests.post(url, json={'key': session.__node__['key']})
+    return res.json()
+
+def get_raw_details(uuid):
+    url = '{}{}'.format(session.__node__['host'], NODE_RAW_DETAILS)
+    res = requests.post(url, json={'key': session.__node__['key'], 'uuid': uuid})
     return res.json()
 
 def add_indicators(indicators_type, indicators, tags=[]):
@@ -32,7 +43,7 @@ def add_indicators(indicators_type, indicators, tags=[]):
         'key': session.__node__['key']
     }
 
-    url = '{}/api/indicators/add/'.format(session.__node__['host'])
+    url = '{}{}'.format(session.__node__['host'], NODE_INDICATORS_ADD)
     res = requests.post(url, json=data)
     return res.json()
 
@@ -42,16 +53,6 @@ def get_indicator_details(indicator):
         'key': session.__node__['key']
     }
 
-    url = '{}/api/indicators/details/'.format(session.__node__['host'])
+    url = '{}{}'.format(session.__node__['host'], NODE_INDICATORS_DETAILS)
     res = requests.post(url, json=data)
-    return res.json()
-
-def get_raw_messages():
-    url = '{}/api/raw/fetch/'.format(session.__node__['host'])
-    res = requests.post(url, json={'key': session.__node__['key']})
-    return res.json()
-
-def get_raw_details(uuid):
-    url = '{}/api/raw/details/'.format(session.__node__['host'])
-    res = requests.post(url, json={'key': session.__node__['key'], 'uuid': uuid})
     return res.json()

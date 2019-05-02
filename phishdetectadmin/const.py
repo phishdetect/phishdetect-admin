@@ -15,7 +15,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-NODE_INDICATORS_FETCH = "/api/indicators/fetch/"
-NODE_INDICATORS_ADD = "/api/indicators/add/"
-NODE_EVENTS_FETCH = "/api/events/fetch/"
-NODE_EVENTS_ADD = "/api/events/add/"
+NODE_INDICATORS_FETCH = '/api/indicators/fetch/'
+NODE_INDICATORS_ADD = '/api/indicators/add/'
+NODE_INDICATORS_DETAILS = '/api/indicators/details/'
+NODE_EVENTS_FETCH = '/api/events/fetch/'
+NODE_EVENTS_ADD = '/api/events/add/'
+NODE_RAW_FETCH = '/api/raw/fetch/'
+NODE_RAW_DETAILS = '/api/raw/details/'
