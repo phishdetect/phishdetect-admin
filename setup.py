@@ -27,7 +27,7 @@ requires = (
 
 setup(
     name='phishdetect-admin',
-    version='1.0',
+    version='1.1',
     author='Claudio Guarnieri',
     author_email='nex@nex.sx',
     description=description,
@@ -37,10 +37,7 @@ setup(
     install_requires=requires,
     packages=['phishdetectadmin',],
     package_data={'phishdetectadmin': 'phishdetectadmin/templates/*.html'},
-    data_files=[('phishdetectadmin/templates', [os.path.join('phishdetectadmin', 'templates', f) for f in os.listdir('phishdetectadmin/templates/')])],
-
-    zip_safe=False,
-
+    include_package_data=True,
     keywords='security phishing phishdetect',
     license='GPLv3',
     classifiers=[
