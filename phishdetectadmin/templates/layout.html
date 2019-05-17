@@ -14,18 +14,18 @@ a:hover {
 }
 </style>
 </head>
-<body class="bg-grey-lightest text-black">
+<body class="bg-gray-lightest text-black">
 <div class="p-12 w-full">
     <div class="flex">
         <ul class="list-reset flex mb-8 w-full">
-            <li class="mr-6">{% if page == 'Events' %}<span class="text-grey-dark">Events</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/events/">Events</a>{% endif %}</li>
-            <li class="mr-6">{% if page == 'Raw Messages' %}<span class="text-grey-dark">Raw Messages</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/raws/">Raw Messages</a>{% endif %}</li>
-            <li class="mr-6">{% if page == 'Indicators' %}<span class="text-grey-dark">Indicators</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/indicators/">Indicators</a>{% endif %}</li>
-            <li class="mr-6">{% if page == 'Configuration' %}<span class="text-grey-dark">Configuration</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/conf/">Configuration</a>{% endif %}</li>
+            <li class="mr-6">{% if page == 'Events' %}<span class="text-gray-dark">Events</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/events/">Events</a>{% endif %}</li>
+            <li class="mr-6">{% if page == 'Raw Messages' %}<span class="text-gray-dark">Raw Messages</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/raws/">Raw Messages</a>{% endif %}</li>
+            <li class="mr-6">{% if page == 'Indicators' %}<span class="text-gray-dark">Indicators</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/indicators/">Indicators</a>{% endif %}</li>
+            <li class="mr-6">{% if page == 'Configuration' %}<span class="text-gray-dark">Configuration</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/conf/">Configuration</a>{% endif %}</li>
         </ul>
     </div>
 
-    <h1 class="font-normal mb-6"><b>PhishDetect</b> Admin{% if page %} - {{ page }}{% endif %}</h1>
+    <h1 class="text-2xl mb-6"><b>PhishDetect</b> Admin{% if page %} - {{ page }}{% endif %}</h1>
 
     {% block content %}{% endblock %}
 </div>

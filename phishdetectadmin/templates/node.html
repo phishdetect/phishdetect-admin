@@ -2,11 +2,11 @@
 {% block content %}
 <h2 class="mb-4">Select a node</h2>
 <form method="POST" action="/node/">
-    <select name="host" class="p-4 rounded-lg bg-grey-light">
+    <select name="host" class="p-4 rounded-lg bg-gray-300">
         {% for node in nodes %}
         <option>{{ node.host }}</option>
         {% endfor %}
     </select>
-    <span class="ml-4"><input type="submit" class="py-4 px-6 rounded-lg bg-blue hover:bg-blue-light border-b-4 cursor-pointer border-blue-dark hover:border-blue text-white" name="submit" value="Select" /></span>
+    <span class="ml-4"><input type="submit" class="py-4 px-6 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white" name="submit" value="Select" /></span>
 </form>
 {% endblock %}
