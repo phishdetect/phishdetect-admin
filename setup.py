@@ -27,7 +27,7 @@ requires = (
 
 setup(
     name='phishdetect-admin',
-    version='1.2',
+    version='1.3',
     author='Claudio Guarnieri',
     author_email='nex@nex.sx',
     description=description,
