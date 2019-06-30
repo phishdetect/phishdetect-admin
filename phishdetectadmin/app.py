@@ -270,7 +270,14 @@ def raw_download(uuid):
     mem.write(raw.encode('utf-8'))
     mem.seek(0)
 
+    if results['type'] == 'email':
+        mimetype = 'message/rfc822'
+        filename = '{}.eml'.format(results['uuid'])
+    else:
+        mimetype = 'text/plain'
+        filename = '{}.txt'.format(results['uuid'])
+
     return send_file(mem,
-        mimetype='message/rfc822',
+        mimetype=mimetype,
         as_attachment=True,
-        attachment_filename="{}.eml".format(results['uuid']))
+        attachment_filename=filename)
