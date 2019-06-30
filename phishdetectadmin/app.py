@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import io
 import datetime
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_file
 
 from .config import load_config, save_config, load_archived_events, archive_event
 from .utils import get_indicator_type, clean_indicator, extract_domain
@@ -250,3 +251,26 @@ def raw(uuid):
 
     return render_template('raw.html',
         node=session.__node__['host'], page='Raw Message', message=results)
+
+@app.route('/download/<string:uuid>', methods=['GET',])
+def raw_download(uuid):
+    if not session.__node__:
+        return redirect(url_for('node'))
+
+    results = get_raw_details(uuid)
+    if 'error' in results:
+        return render_template('error.html',
+            msg="Unable to fetch raw message details: {}".format(results['error']))
+
+    raw = results['content']
+    if raw.strip() == "":
+        return render_template('error.html', msg="The fetched message seems empty")
+
+    mem = io.BytesIO()
+    mem.write(raw.encode('utf-8'))
+    mem.seek(0)
+
+    return send_file(mem,
+        mimetype='message/rfc822',
+        as_attachment=True,
+        attachment_filename="{}.eml".format(results['uuid']))

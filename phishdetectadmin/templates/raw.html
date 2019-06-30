@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="mb-4">User contact: {{ message.contact }}</div>
+
+<div class="mb-4"><button class="py-2 px-4 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white" onClick="location.href='/download/{{ message.uuid }}'">Download</button></div>
+
+<div class="mb-4"><b>User contact:</b> {{ message.user_contact }}</div>
 
 <pre class="p-8 break-words bg-gray-200 rounded-xl">{{ message.content }}</pre>
 {% endblock %}

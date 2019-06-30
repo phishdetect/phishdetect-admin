@@ -6,12 +6,12 @@
 <form method="POST" action="/indicators/">
     <div class="mb-4">
         <label for="indicators">List of comma-separated tags (optional):</label><br />
-        <input type="text" class="p-4 border-2 border-gray rounded-lg" name="tags" />
+        <input type="text" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" name="tags" />
     </div>
     <div class="mb-4">
         <label for="indicators">List of indicators (one per line) <b>*required</b>:</label><br />
-        <textarea name="indicators" class="p-4 border-2 border-gray rounded-lg" rows="15" cols="100">{% if indicators %}{{ indicators }}{% endif %}</textarea>
+        <textarea name="indicators" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" rows="15" cols="100">{% if indicators %}{{ indicators }}{% endif %}</textarea>
     </div>
-    <div><input type="submit" class="py-4 px-6 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white" name="submit" value="Send indicators" /></div>
+    <div><input type="submit" class="py-3 px-4 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white text-lg" name="submit" value="Send indicators" /></div>
 </form>
 {% endblock %}

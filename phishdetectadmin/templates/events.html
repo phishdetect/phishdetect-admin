@@ -2,9 +2,9 @@
 {% block content %}
 <div class="mt-2 mb-4">
 {% if archived %}
-<a href="/events">View new events</a>
+<a href="/events"><i class="fas fa-exclamation-circle"></i> View new events</a>
 {% else %}
-<a href="/events?archived=yes">View archived events</a>
+<a href="/events?archived=yes"><i class="fas fa-archive"></i> View archived events</a>
 {% endif %}
 </div>
 {% if events %}
@@ -45,7 +45,7 @@
                     {% if event.indicator %}
                         <a href="/indicator/{{ event.indicator }}">{{ event.indicator }}</a>
                     {% else %}
-                        <a href="/indicators?ioc={{ event.match }}">Add match to indicators</a>
+                        <a href="/indicators?ioc={{ event.match }}"><i class="fas fa-plus"></i> Add match to indicators</a>
                     {% endif %}
                     </td>
                 </tr>

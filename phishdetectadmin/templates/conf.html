@@ -1,24 +1,27 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2 class="mb-4">Currently configured nodes</h2 class="mb-4">
+<h2 class="mb-2 font-bold">Currently configured nodes</h2>
 {% if nodes %}
     {% for node in nodes %}
-    <div class="mb-4 p-4 bg-gray-300 rounded-lg"><b>Host:</b> {{ node.host }} <b>Key:</b> {{ node.key }}</div>
+    <div class="mb-4 p-4 bg-gray-300 rounded-lg">
+        <div><b>Host:</b> {{ node.host }}</div>
+        <div><b>Key:</b> {{ node.key }}</div>
+    </div>
     {% endfor %}
 {% else %}
 <div>No PhishDetect Nodes have been configured yet.</div>
 {% endif %}
 
-<h2 class="mb-4">Add new node</h2 class="mb-4">
+<h2 class="mt-8 mb-2 font-bold">Add new node</h2>
 <form method="POST" action="/conf">
     <div class="mb-4">
         <label for="host">Host:</label><br />
-        <input type="text" class="p-4 border-2 border-gray rounded-lg" name="host" value="" />
+        <input type="text" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" name="host" value="" />
     </div>
     <div class="mb-4">
         <label for="key">API Key:</label><br />
-        <input type="key" class="p-4 border-2 border-gray rounded-lg" name="key" value="" />
+        <input type="key" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" name="key" value="" />
     </div>
-    <div><input type="submit" class="py-4 px-6 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white" name="submit" value="Save" /></div>
+    <div><input type="submit" class="py-3 px-4 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white text-lg" name="submit" value="Save" /></div>
 </form>
 {% endblock %}
