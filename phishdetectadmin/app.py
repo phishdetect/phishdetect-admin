@@ -16,7 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import datetime
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, make_response
 
 from .config import load_config, save_config, load_archived_events, archive_event
 from .utils import get_indicator_type, clean_indicator, extract_domain
@@ -250,3 +250,20 @@ def raw(uuid):
 
     return render_template('raw.html',
         node=session.__node__['host'], page='Raw Message', message=results)
+
+@app.route('/raw/<string:uuid>/body', methods=['GET',])
+def raw_body(uuid):
+    if not session.__node__:
+        return redirect(url_for('node'))
+
+    result = get_raw_details(uuid)
+    if 'error' in result:
+        return "Unable to fetch raw message details: {}".format(result['error']), 500
+
+    if result["type"] != "email":
+        return "Raw bodies are only available for email message events", 400
+
+    response = make_response(result["content"])
+    response.headers.set('Content-Type', 'message/rfc822')
+    response.headers.set('Content-Disposition', 'attachment', filename='%s.eml' % result["uuid"])
+    return response
