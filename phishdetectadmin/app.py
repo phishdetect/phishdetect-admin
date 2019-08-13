@@ -48,7 +48,7 @@ def conf():
             config = {'nodes': []}
 
         config['nodes'].append({
-            'host': host,
+            'host': host.rstrip('/'),
             'key': key,
         })
         save_config(config)
