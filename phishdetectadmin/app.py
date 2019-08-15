@@ -23,6 +23,7 @@ from .config import load_config, save_config, load_archived_events, archive_even
 from .utils import get_indicator_type, clean_indicator, extract_domain
 from .api import get_events, add_indicators, get_indicator_details
 from .api import get_raw_messages, get_raw_details
+from .api import get_registration_pending, activate_user
 from . import session
 
 app = Flask(__name__)
@@ -281,3 +282,28 @@ def raw_download(uuid):
         mimetype=mimetype,
         as_attachment=True,
         attachment_filename=filename)
+
+@app.route('/registrations/', methods=['GET',])
+def registration():
+    if not session.__node__:
+        return redirect(url_for('node'))
+
+    results = get_registration_pending()
+    if 'error' in results:
+        return render_template('error.html',
+            msg="Unable to fetch pending registration requests: {}".format(results['error']))
+
+    return render_template('registration.html',
+        node=session.__node__['host'], page="Registration Requests", requests=results)
+
+@app.route('/registrations/activate/<string:api_key>', methods=['GET',])
+def registration_activate(api_key):
+    if not session.__node__:
+        return redirect(url_for('node'))
+
+    results = activate_user(api_key)
+    if 'error' in results:
+        return render_template('error.html',
+            msg="Unable to activate user: {}".format(results['error']))
+
+    return render_template('success.html', msg="The user has been activated successfully")
