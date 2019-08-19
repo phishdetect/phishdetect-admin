@@ -19,24 +19,39 @@ import os
 from setuptools import setup
 
 description = "Web application to administer a PhishDetect Node"
+this_directory = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(this_directory, "README.md"), encoding="utf-8") as handle:
+    long_description = handle.read()
+
 requires = (
     'Flask',
     'requests',
     'PyYAML',
 )
 
+def get_package_data(package):
+    walk = [(dirpath.replace(package + os.sep, '', 1), filenames)
+            for dirpath, dirnames, filenames in os.walk(package)
+            if not os.path.exists(os.path.join(dirpath, '__init__.py'))]
+
+    filepaths = []
+    for base, filenames in walk:
+        filepaths.extend([os.path.join(base, filename)
+                          for filename in filenames])
+    return {package: filepaths}
+
 setup(
     name='phishdetect-admin',
-    version='2.0',
+    version='2.1',
     author='Claudio Guarnieri',
     author_email='nex@nex.sx',
     description=description,
-    long_description=description,
+    long_description=long_description,
 
     scripts=['bin/phishdetect-admin',],
     install_requires=requires,
     packages=['phishdetectadmin',],
-    package_data={'phishdetectadmin': 'phishdetectadmin/templates/*.html'},
+    package_data=get_package_data('phishdetectadmin'),
     include_package_data=True,
     keywords='security phishing phishdetect',
     license='GPLv3',
