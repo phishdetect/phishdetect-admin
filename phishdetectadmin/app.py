@@ -23,7 +23,7 @@ from .config import load_config, save_config, load_archived_events, archive_even
 from .utils import get_indicator_type, clean_indicator, extract_domain
 from .api import get_events, add_indicators, get_indicator_details
 from .api import get_raw_messages, get_raw_details
-from .api import get_users_pending, activate_user, deactivate_user
+from .api import get_users_pending, get_users_active, activate_user, deactivate_user
 from . import session
 
 app = Flask(__name__)
@@ -296,17 +296,17 @@ def users_pending():
     return render_template('users_pending.html',
         node=session.__node__['host'], page="Users", users=results)
 
-@app.route('/users/all/', methods=['GET',])
-def users_all():
+@app.route('/users/active/', methods=['GET',])
+def users_active():
     if not session.__node__:
         return redirect(url_for('node'))
 
-    results = get_users_all()
+    results = get_users_active()
     if 'error' in results:
         return render_template('error.html',
             msg="Unable to fetch users: {}".format(results['error']))
 
-    return render_template('users_all.html',
+    return render_template('users_active.html',
         node=session.__node__['host'], page="Users", users=results)
 
 @app.route('/users/activate/<string:api_key>', methods=['GET',])

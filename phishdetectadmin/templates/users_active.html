@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<a href="/users/active/"><i class="fas fa-user-plus"></i> View <b>active</b> users</a>
+<a href="/users/"><i class="fas fa-user-plus"></i> View <b>pending</b> users</a>
 
 <div class="mt-4 mb-4">
 {% if users %}
@@ -10,7 +10,7 @@
             <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">User name</th>
             <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">User email</th>
             <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">API key</th>
-            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter text-center">Activate</th>
+            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter text-center">Deactivate</th>
         </tr>
         {% for user in users %}
         <tr>
@@ -18,21 +18,21 @@
             <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ user.name }}</td>
             <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ user.email }}</td>
             <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ user.key }}</td>
-            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter text-center"><button class="ml-2 py-1 px-2 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white" onClick="confirmActivation('{{ user.key }}');">Activate</button></td>
+            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter text-center"><button class="ml-2 py-1 px-2 rounded-lg bg-red-500 hover:bg-red-400 border-b-4 cursor-pointer border-red-600 hover:border-red-500 text-white" onClick="confirmDeactivation('{{ user.key }}');">Deactivate</button></td>
         </tr>
         {% endfor %}
     </table>
 {% else %}
-<p>There are no pending users to activate.</p>
+<p>There are no active users.</p>
 {% endif %}
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-function confirmActivation(key) {
+function confirmDeactivation(key) {
     if (confirm("Are you sure?")) {
-        location.href = "/users/activate/" + key;
+        location.href = "/users/deactivate/" + key;
     }
 }
 </script>

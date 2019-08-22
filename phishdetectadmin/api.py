@@ -62,6 +62,12 @@ def get_users_pending():
     res = requests.get(url)
     return res.json()
 
+def get_users_active():
+    url = '{}{}?key={}'.format(session.__node__['host'],
+        NODE_USERS_ACTIVE, session.__node__['key'])
+    res = requests.get(url)
+    return res.json()
+
 def activate_user(api_key):
     url = '{}{}/{}/?key={}'.format(session.__node__['host'],
         NODE_USERS_ACTIVATE, api_key, session.__node__['key'])
