@@ -56,14 +56,20 @@ def get_indicator_details(indicator):
     res = requests.get(url)
     return res.json()
 
-def get_registration_pending():
+def get_users_pending():
     url = '{}{}?key={}'.format(session.__node__['host'],
-        NODE_REGISTRATION_PENDING, session.__node__['key'])
+        NODE_USERS_PENDING, session.__node__['key'])
     res = requests.get(url)
     return res.json()
 
 def activate_user(api_key):
     url = '{}{}/{}/?key={}'.format(session.__node__['host'],
-        NODE_REGISTRATION_ACTIVATE, api_key, session.__node__['key'])
+        NODE_USERS_ACTIVATE, api_key, session.__node__['key'])
+    res = requests.get(url)
+    return res.json()
+
+def deactivate_user(api_key):
+    url = '{}{}/{}/?key={}'.format(session.__node__['host'],
+        NODE_USERS_DEACTIVATE, api_key, session.__node__['key'])
     res = requests.get(url)
     return res.json()

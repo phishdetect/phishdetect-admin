@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="mt-2 mb-4">
+{% if requests %}
+    <table class="w-full p-0 m-0">
+        <tr>
+            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">Date</th>
+            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">User name</th>
+            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">User email</th>
+            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">API key</th>
+            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter text-center">Activate</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ user.datetime }}</td>
+            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ user.name }}</td>
+            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ user.email }}</td>
+            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ user.key }}</td>
+            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter text-center"><button class="ml-2 py-1 px-2 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white" onClick="location.href='/registrations/activate/{{ user.key }}'">Activate</button></td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+<p>No new registration users have been received yet.</p>
+{% endif %}
+</div>
+{% endblock %}

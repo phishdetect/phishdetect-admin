@@ -23,7 +23,7 @@ from .config import load_config, save_config, load_archived_events, archive_even
 from .utils import get_indicator_type, clean_indicator, extract_domain
 from .api import get_events, add_indicators, get_indicator_details
 from .api import get_raw_messages, get_raw_details
-from .api import get_registration_pending, activate_user
+from .api import get_users_pending, activate_user, deactivate_user
 from . import session
 
 app = Flask(__name__)
@@ -283,21 +283,34 @@ def raw_download(uuid):
         as_attachment=True,
         attachment_filename=filename)
 
-@app.route('/registrations/', methods=['GET',])
-def registration():
+@app.route('/users/', methods=['GET',])
+def users_pending():
     if not session.__node__:
         return redirect(url_for('node'))
 
-    results = get_registration_pending()
+    results = get_users_pending()
     if 'error' in results:
         return render_template('error.html',
-            msg="Unable to fetch pending registration requests: {}".format(results['error']))
+            msg="Unable to fetch pending users: {}".format(results['error']))
 
-    return render_template('registration.html',
-        node=session.__node__['host'], page="Registration Requests", requests=results)
+    return render_template('users_pending.html',
+        node=session.__node__['host'], page="Users", users=results)
 
-@app.route('/registrations/activate/<string:api_key>', methods=['GET',])
-def registration_activate(api_key):
+@app.route('/users/all/', methods=['GET',])
+def users_all():
+    if not session.__node__:
+        return redirect(url_for('node'))
+
+    results = get_users_all()
+    if 'error' in results:
+        return render_template('error.html',
+            msg="Unable to fetch users: {}".format(results['error']))
+
+    return render_template('users_all.html',
+        node=session.__node__['host'], page="Users", users=results)
+
+@app.route('/users/activate/<string:api_key>', methods=['GET',])
+def users_activate(api_key):
     if not session.__node__:
         return redirect(url_for('node'))
 
@@ -307,3 +320,15 @@ def registration_activate(api_key):
             msg="Unable to activate user: {}".format(results['error']))
 
     return render_template('success.html', msg="The user has been activated successfully")
+
+@app.route('/users/deactivate/<string:api_key>', methods=['GET',])
+def users_deactivate(api_key):
+    if not session.__node__:
+        return redirect(url_for('node'))
+
+    results = deactivate_user(api_key)
+    if 'error' in results:
+        return render_template('error.html',
+            msg="Unable to deactivate user: {}".format(results['error']))
+
+    return render_template('success.html', msg="The user has been deactivated successfully")
