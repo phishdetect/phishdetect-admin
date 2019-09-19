@@ -16,7 +16,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import re
+import smtplib
 from urllib.parse import urlparse
+
+from .config import load_config
 
 def get_indicator_type(indicator):
     # TODO: Verify regex.
@@ -46,3 +49,25 @@ def clean_indicator(indicator):
 def extract_domain(url):
     parsed_url = urlparse(url)
     return parsed_url.netloc
+
+def send_email(recipient, subject, message):
+    config = load_config()
+
+    if 'smtp_host' not in config or config['smtp_host'].strip() == '':
+        return
+
+    server = smtplib.SMTP(config['smtp_host'], 587)
+    server.ehlo()
+    server.starttls()
+    server.login(config['smtp_user'], config['smtp_pass'])
+
+    msg_text = '''\
+From: PhishDetect <{}>
+To: {}
+Subject: {}
+
+{}
+'''.format(config['smtp_user'], recipient, subject, message)
+
+    server.sendmail(config['smtp_user'], recipient, msg_text)
+    server.close()

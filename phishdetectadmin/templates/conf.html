@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 {% block content %}
 <h2 class="mb-2 font-bold">Currently configured nodes</h2>
-{% if nodes %}
-    {% for node in nodes %}
+{% if config.nodes %}
+    {% for node in config.nodes %}
     <div class="mb-4 p-4 bg-gray-300 rounded-lg">
         <div><b>Host:</b> {{ node.host }}</div>
-        <div><b>Key:</b> {{ node.key }}</div>
+        <div><b>Key:</b> <span class="font-mono">{{ node.key }}</span></div>
     </div>
     {% endfor %}
 {% else %}
@@ -13,7 +13,7 @@
 {% endif %}
 
 <h2 class="mt-8 mb-2 font-bold">Add new node</h2>
-<form method="POST" action="/conf">
+<form method="POST" action="/conf/node/">
     <div class="mb-4">
         <label for="host">Host:</label><br />
         <input type="text" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" name="host" value="" />
@@ -21,6 +21,26 @@
     <div class="mb-4">
         <label for="key">API Key:</label><br />
         <input type="key" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" name="key" value="" />
+    </div>
+    <div><input type="submit" class="py-3 px-4 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white text-lg" name="submit" value="Add" /></div>
+</form>
+
+<hr class="mt-8 mb-8" />
+
+<h2 class="mb-2 font-bold">SMTP configuration</h2>
+<p class="mb-2">SMTP settings are necessary to be able to send a notification email whenever a user is activated.</p>
+<form method="POST" action="/conf/smtp/">
+    <div class="mb-4">
+        <label for="smtp_host">Host:</label><br />
+        <input type="text" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" name="smtp_host" value="{{ config.smtp_host }}" />
+    </div>
+    <div class="mb-4">
+        <label for="smtp_user">User:</label><br />
+        <input type="smtp_user" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" name="smtp_user" value="{{ config.smtp_user }}" />
+    </div>
+    <div class="mb-4">
+        <label for="smtp_pass">Password:</label><br />
+        <input type="smtp_pass" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" name="smtp_pass" value="{{ config.smtp_pass }}" />
     </div>
     <div><input type="submit" class="py-3 px-4 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white text-lg" name="submit" value="Save" /></div>
 </form>

@@ -20,7 +20,7 @@ import datetime
 from flask import Flask, render_template, request, redirect, url_for, send_file
 
 from .config import load_config, save_config, load_archived_events, archive_event
-from .utils import get_indicator_type, clean_indicator, extract_domain
+from .utils import get_indicator_type, clean_indicator, extract_domain, send_email
 from .api import get_events, add_indicators, get_indicator_details
 from .api import get_raw_messages, get_raw_details
 from .api import get_users_pending, get_users_active, activate_user, deactivate_user
@@ -28,33 +28,50 @@ from . import session
 
 app = Flask(__name__)
 
-@app.route('/conf/', methods=['GET', 'POST'])
+@app.route('/conf/', methods=['GET'])
 def conf():
-    if request.method == 'GET':
-        nodes = []
-        config = load_config()
-        if config:
-            nodes = config['nodes']
+    return render_template('conf.html', page='Configuration', config=load_config())
 
-        return render_template('conf.html', page='Configuration', nodes=nodes)
-    elif request.method == 'POST':
-        host = request.form.get('host')
-        key = request.form.get('key')
+@app.route('/conf/node/', methods=['POST'])
+def conf_node():
+    host = request.form.get('host')
+    key = request.form.get('key')
 
-        if host == "" or key == "":
-            return redirect(url_for('conf'))
+    if host == '' or key == '':
+        return redirect(url_for('conf'))
 
-        config = load_config()
-        if not config:
-            config = {'nodes': []}
+    config = load_config()
+    if not config:
+        config = {'nodes': []}
 
-        config['nodes'].append({
-            'host': host.rstrip('/'),
-            'key': key,
-        })
-        save_config(config)
+    config['nodes'].append({
+        'host': host.rstrip('/'),
+        'key': key,
+    })
+    save_config(config)
 
-        return redirect(url_for('index'))
+    return redirect(url_for('index'))
+
+@app.route('/conf/smtp/', methods=['POST'])
+def conf_smtp():
+    smtp_host = request.form.get('smtp_host')
+    smtp_user = request.form.get('smtp_user')
+    smtp_pass = request.form.get('smtp_pass')
+
+    if smtp_host == '' or smtp_user == '' or smtp_pass == '':
+        return redirect(url_for('conf'))
+
+    config = load_config()
+    if not config:
+        config = {'node': []}
+
+    config['smtp_host'] = smtp_host
+    config['smtp_user'] = smtp_user
+    config['smtp_pass'] = smtp_pass
+
+    save_config(config)
+
+    return redirect(url_for('conf'))
 
 @app.route('/node/', methods=['GET', 'POST'])
 def node():
@@ -166,18 +183,18 @@ def indicators():
         return render_template('indicators.html', indicators=ioc, page='Indicators')
     # Process new indicators to be added.
     elif request.method == 'POST':
-        indicators_string = request.form.get('indicators', "")
-        tags_string = request.form.get('tags', "")
+        indicators_string = request.form.get('indicators', '')
+        tags_string = request.form.get('tags', '')
 
         indicators_string = indicators_string.strip()
         tags_string = tags_string.strip()
 
-        if indicators_string == "":
+        if indicators_string == '':
             return render_template('indicators.html',
                 page='Indicators',
                 error="You didn't provide a valid list of indicators")
 
-        if tags_string == "":
+        if tags_string == '':
             tags = []
         else:
             tags = [t.lower().strip() for t in tags_string.split(',')]
@@ -264,7 +281,7 @@ def raw_download(uuid):
             msg="Unable to fetch raw message details: {}".format(results['error']))
 
     raw = results['content']
-    if raw.strip() == "":
+    if raw.strip() == '':
         return render_template('error.html', msg="The fetched message seems empty")
 
     mem = io.BytesIO()
@@ -314,10 +331,34 @@ def users_activate(api_key):
     if not session.__node__:
         return redirect(url_for('node'))
 
-    results = activate_user(api_key)
-    if 'error' in results:
+    # First we get the pending users (before activating the current).
+    users = get_users_pending()
+    if 'error' in users:
         return render_template('error.html',
-            msg="Unable to activate user: {}".format(results['error']))
+            msg="Unable to fetch pending users: {}".format(users['error']))
+
+    # Then we activate the user.
+    result = activate_user(api_key)
+    if 'error' in result:
+        return render_template('error.html',
+            msg="Unable to activate user: {}".format(result['error']))
+
+    email = None
+    for user in users:
+        if api_key == user['key']:
+            email = user['email']
+            break
+
+    if not email:
+        return render_template('error.html', msg="User not found")
+
+    message = "Your PhishDetect secret token has been activated!"
+
+    try:
+        send_email(email, "Your PhishDetect secret token has been activated", message)
+    except Exception as e:
+        return render_template('error.html',
+            msg="Failed to send email to user: {}".format(e))
 
     return render_template('success.html', msg="The user has been activated successfully")
 
@@ -326,9 +367,34 @@ def users_deactivate(api_key):
     if not session.__node__:
         return redirect(url_for('node'))
 
-    results = deactivate_user(api_key)
-    if 'error' in results:
+    # First we get the pending users (before activating the current).
+    users = get_users_active()
+    if 'error' in users:
         return render_template('error.html',
-            msg="Unable to deactivate user: {}".format(results['error']))
+            msg="Unable to fetch pending users: {}".format(users['error']))
+
+    # Then we activate the user.
+    result = deactivate_user(api_key)
+    if 'error' in result:
+        return render_template('error.html',
+            msg="Unable to deactivate user: {}".format(result['error']))
+
+    email = None
+    for user in users:
+        if api_key == user['key']:
+            email = user['email']
+            break
+
+    if not email:
+        return render_template('error.html', msg="User not found")
+
+    message = "Your PhishDetect secret token has been deactivated!\n\
+If you have any questions, please contact your PhishDetect Node administrator."
+
+    try:
+        send_email(email, "Your PhishDetect secret token has been deactivated", message)
+    except Exception as e:
+        return render_template('error.html',
+            msg="Failed to send email to user: {}".format(e))
 
     return render_template('success.html', msg="The user has been deactivated successfully")
