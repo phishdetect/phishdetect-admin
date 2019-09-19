@@ -42,7 +42,7 @@ def get_package_data(package):
 
 setup(
     name='phishdetect-admin',
-    version='2.2',
+    version='2.3',
     author='Claudio Guarnieri',
     author_email='nex@nex.sx',
     description=description,
