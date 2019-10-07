@@ -164,8 +164,6 @@ def events():
             if result['uuid'] not in archived_events:
                 final.append(result)
 
-    final.reverse()
-
     return render_template('events.html',
         node=session.__node__['host'], page='Events', events=final, archived=archived)
 
