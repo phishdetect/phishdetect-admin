@@ -18,19 +18,19 @@
 import os
 import yaml
 
-storage_folder = os.path.join(os.getenv('HOME'), '.config', 'phishdetect')
-config_path = os.path.join(storage_folder, 'config')
-archived_events_path = os.path.join(storage_folder, 'events')
+storage_folder = os.path.join(os.getenv("HOME"), ".config", "phishdetect")
+config_path = os.path.join(storage_folder, "config")
+archived_events_path = os.path.join(storage_folder, "events")
 
 def load_config():
     if not os.path.exists(config_path):
         return None
 
-    with open(config_path, 'r') as handle:
+    with open(config_path, "r") as handle:
         return yaml.load(handle)
 
 def save_config(config):
-    with open(config_path, 'w') as handle:
+    with open(config_path, "w") as handle:
         yaml.dump(config, handle, default_flow_style=False)
 
 def load_archived_events():
@@ -38,7 +38,7 @@ def load_archived_events():
     if not os.path.exists(archived_events_path):
         return archived_events
 
-    with open(archived_events_path, 'r') as handle:
+    with open(archived_events_path, "r") as handle:
         for line in handle:
             line = line.strip()
             if line == "":
@@ -55,5 +55,5 @@ def archive_event(uuid):
     if uuid in archived_events:
         return
 
-    with open(archived_events_path, 'a') as handle:
-        handle.write('{}\n'.format(uuid))
+    with open(archived_events_path, "a") as handle:
+        handle.write("{}\n".format(uuid))

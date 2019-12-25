@@ -24,15 +24,15 @@ with open(os.path.join(this_directory, "README.md"), encoding="utf-8") as handle
     long_description = handle.read()
 
 requires = (
-    'Flask',
-    'requests',
-    'PyYAML',
+    "Flask",
+    "requests",
+    "PyYAML",
 )
 
 def get_package_data(package):
-    walk = [(dirpath.replace(package + os.sep, '', 1), filenames)
+    walk = [(dirpath.replace(package + os.sep, "", 1), filenames)
             for dirpath, dirnames, filenames in os.walk(package)
-            if not os.path.exists(os.path.join(dirpath, '__init__.py'))]
+            if not os.path.exists(os.path.join(dirpath, "__init__.py"))]
 
     filepaths = []
     for base, filenames in walk:
@@ -41,20 +41,20 @@ def get_package_data(package):
     return {package: filepaths}
 
 setup(
-    name='phishdetect-admin',
-    version='2.4',
-    author='Claudio Guarnieri',
-    author_email='nex@nex.sx',
+    name="phishdetect-admin",
+    version="2.4",
+    author="Claudio Guarnieri",
+    author_email="nex@nex.sx",
     description=description,
     long_description=long_description,
 
-    scripts=['bin/phishdetect-admin',],
+    scripts=["bin/phishdetect-admin",],
     install_requires=requires,
-    packages=['phishdetectadmin',],
-    package_data=get_package_data('phishdetectadmin'),
+    packages=["phishdetectadmin",],
+    package_data=get_package_data("phishdetectadmin"),
     include_package_data=True,
-    keywords='security phishing phishdetect',
-    license='GPLv3',
+    keywords="security phishing phishdetect",
+    license="GPLv3",
     classifiers=[
     ],
 )

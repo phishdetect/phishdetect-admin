@@ -21,61 +21,61 @@ from .const import *
 from . import session
 
 def get_events():
-    url = '{}{}?key={}'.format(session.__node__['host'],
-        NODE_EVENTS_FETCH, session.__node__['key'])
+    url = "{}{}?key={}".format(session.__node__["host"],
+        NODE_EVENTS_FETCH, session.__node__["key"])
     res = requests.get(url)
     return res.json()
 
 def get_raw_messages():
-    url = '{}{}?key={}'.format(session.__node__['host'],
-        NODE_RAW_FETCH, session.__node__['key'])
+    url = "{}{}?key={}".format(session.__node__["host"],
+        NODE_RAW_FETCH, session.__node__["key"])
     res = requests.get(url)
     return res.json()
 
 def get_raw_details(uuid):
-    url = '{}{}/{}/?key={}'.format(session.__node__['host'],
-        NODE_RAW_DETAILS, uuid, session.__node__['key'])
+    url = "{}{}/{}/?key={}".format(session.__node__["host"],
+        NODE_RAW_DETAILS, uuid, session.__node__["key"])
     res = requests.get(url)
     return res.json()
 
 def add_indicators(indicators_type, indicators, tags=[]):
     data = {
-        'type': indicators_type,
-        'indicators': indicators,
-        'tags': tags,
+        "type": indicators_type,
+        "indicators": indicators,
+        "tags": tags,
     }
 
-    url = '{}{}?key={}'.format(session.__node__['host'],
-        NODE_INDICATORS_ADD, session.__node__['key'])
+    url = "{}{}?key={}".format(session.__node__["host"],
+        NODE_INDICATORS_ADD, session.__node__["key"])
     res = requests.post(url, json=data)
     return res.json()
 
 def get_indicator_details(indicator):
-    url = '{}{}/{}/?key={}'.format(session.__node__['host'],
-        NODE_INDICATORS_DETAILS, indicator, session.__node__['key'])
+    url = "{}{}/{}/?key={}".format(session.__node__["host"],
+        NODE_INDICATORS_DETAILS, indicator, session.__node__["key"])
     res = requests.get(url)
     return res.json()
 
 def get_users_pending():
-    url = '{}{}?key={}'.format(session.__node__['host'],
-        NODE_USERS_PENDING, session.__node__['key'])
+    url = "{}{}?key={}".format(session.__node__["host"],
+        NODE_USERS_PENDING, session.__node__["key"])
     res = requests.get(url)
     return res.json()
 
 def get_users_active():
-    url = '{}{}?key={}'.format(session.__node__['host'],
-        NODE_USERS_ACTIVE, session.__node__['key'])
+    url = "{}{}?key={}".format(session.__node__["host"],
+        NODE_USERS_ACTIVE, session.__node__["key"])
     res = requests.get(url)
     return res.json()
 
 def activate_user(api_key):
-    url = '{}{}/{}/?key={}'.format(session.__node__['host'],
-        NODE_USERS_ACTIVATE, api_key, session.__node__['key'])
+    url = "{}{}/{}/?key={}".format(session.__node__["host"],
+        NODE_USERS_ACTIVATE, api_key, session.__node__["key"])
     res = requests.get(url)
     return res.json()
 
 def deactivate_user(api_key):
-    url = '{}{}/{}/?key={}'.format(session.__node__['host'],
-        NODE_USERS_DEACTIVATE, api_key, session.__node__['key'])
+    url = "{}{}/{}/?key={}".format(session.__node__["host"],
+        NODE_USERS_DEACTIVATE, api_key, session.__node__["key"])
     res = requests.get(url)
     return res.json()

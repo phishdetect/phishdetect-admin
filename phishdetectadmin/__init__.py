@@ -48,7 +48,7 @@ def main():
 
     # We randomize a port number to run Flask on.
     port = 5000 + random.randint(0, 999)
-    url = 'http://127.0.0.1:{}'.format(port)
+    url = "http://127.0.0.1:{}".format(port)
 
     # We launch a browser with some delay.
     threading.Timer(1.25, lambda: webbrowser.open(url) ).start()
@@ -56,5 +56,5 @@ def main():
     # We launch the Flask app.
     app.run(port=port, debug=False)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
