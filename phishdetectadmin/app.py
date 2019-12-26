@@ -17,13 +17,11 @@
 
 import io
 import datetime
+import phishdetect
 from flask import Flask, render_template, request, redirect, url_for, send_file
 
 from .config import load_config, save_config, load_archived_events, archive_event
 from .utils import get_indicator_type, clean_indicator, extract_domain, send_email
-from .api import get_events, add_indicators, get_indicator_details
-from .api import get_raw_messages, get_raw_details
-from .api import get_users_pending, get_users_active, activate_user, deactivate_user
 from . import session
 
 app = Flask(__name__)
@@ -125,7 +123,9 @@ def events():
         return redirect(url_for("node"))
 
     try:
-        results = get_events()
+        pd = phishdetect.PhishDetect(host=session.__node__["host"],
+            api_key=session.__node__["key"])
+        results = pd.events.fetch()
     except Exception as e:
         return render_template("error.html",
             msg="The connection to the PhishDetect Node failed: {}".format(e))
@@ -212,12 +212,15 @@ def indicators():
 
         total = 0
         try:
+            pd = phishdetect.PhishDetect(host=session.__node__["host"],
+                api_key=session.__node__["key"])
+
             if domain_indicators:
-                domain_results = add_indicators("domain", domain_indicators, tags)
+                domain_results = pd.indicators.add(domain_indicators, "domain", tags)
                 total += domain_results["counter"]
 
             if email_indicators:
-                email_results = add_indicators("email", email_indicators, tags)
+                email_results = pd.indicators.add(email_indicators, "email", tags)
                 total += email_results["counter"]
         except Exception as e:
             return render_template("error.html",
@@ -231,59 +234,64 @@ def indicators():
         msg = "Added {} new indicators successfully!".format(total)
         return render_template("success.html", msg=msg)
 
-@app.route("/indicator/<string:ioc>", methods=["GET",])
-def indicator(ioc):
+# @app.route("/indicator/<string:ioc>", methods=["GET",])
+# def indicator(ioc):
+#     if not session.__node__:
+#         return redirect(url_for("node"))
+
+#     details = get_indicator_details(ioc)
+#     return render_template("indicator.html",
+#         node=session.__node__["host"], page="Indicator Details", details=details)
+
+@app.route("/reports/", methods=["GET",])
+def reports():
     if not session.__node__:
         return redirect(url_for("node"))
 
-    details = get_indicator_details(ioc)
-    return render_template("indicator.html",
-        node=session.__node__["host"], page="Indicator Details", details=details)
-
-@app.route("/raws/", methods=["GET",])
-def raws():
-    if not session.__node__:
-        return redirect(url_for("node"))
-
-    results = get_raw_messages()
-    results.reverse()
+    pd = phishdetect.PhishDetect(host=session.__node__["host"],
+        api_key=session.__node__["key"])
+    results = pd.reports.fetch()
 
     if "error" in results:
         return render_template("error.html",
-            msg="Unable to fetch raw messages: {}".format(results["error"]))
+            msg="Unable to fetch reports: {}".format(results["error"]))
 
-    return render_template("raws.html",
-        node=session.__node__["host"], page="Raw Messages", messages=results)
+    return render_template("reports.html",
+        node=session.__node__["host"], page="Reports", messages=results)
 
-@app.route("/raw/<string:uuid>", methods=["GET",])
-def raw(uuid):
+@app.route("/reports/<string:uuid>", methods=["GET",])
+def report(uuid):
     if not session.__node__:
         return redirect(url_for("node"))
 
-    results = get_raw_details(uuid)
+    pd = phishdetect.PhishDetect(host=session.__node__["host"],
+        api_key=session.__node__["key"])
+    results = pd.reports.details(uuid=uuid)
     if "error" in results:
         return render_template("error.html",
-            msg="Unable to fetch raw message details: {}".format(results["error"]))
+            msg="Unable to fetch report details: {}".format(results["error"]))
 
-    return render_template("raw.html",
-        node=session.__node__["host"], page="Raw Message", message=results)
+    return render_template("report.html",
+        node=session.__node__["host"], page="Report", message=results)
 
 @app.route("/download/<string:uuid>", methods=["GET",])
-def raw_download(uuid):
+def report_download(uuid):
     if not session.__node__:
         return redirect(url_for("node"))
 
-    results = get_raw_details(uuid)
+    pd = phishdetect.PhishDetect(host=session.__node__["host"],
+        api_key=session.__node__["key"])
+    results = pd.reports.details(uuid=uuid)
     if "error" in results:
         return render_template("error.html",
-            msg="Unable to fetch raw message details: {}".format(results["error"]))
+            msg="Unable to fetch report details: {}".format(results["error"]))
 
-    raw = results["content"]
-    if raw.strip() == "":
+    content = results["content"]
+    if content.strip() == "":
         return render_template("error.html", msg="The fetched message seems empty")
 
     mem = io.BytesIO()
-    mem.write(raw.encode("utf-8"))
+    mem.write(content.encode("utf-8"))
     mem.seek(0)
 
     if results["type"] == "email":
@@ -303,7 +311,9 @@ def users_pending():
     if not session.__node__:
         return redirect(url_for("node"))
 
-    results = get_users_pending()
+    pd = phishdetect.PhishDetect(host=session.__node__["host"],
+        api_key=session.__node__["key"])
+    results = pd.users.get_pending_users()
     if "error" in results:
         return render_template("error.html",
             msg="Unable to fetch pending users: {}".format(results["error"]))
@@ -316,7 +326,9 @@ def users_active():
     if not session.__node__:
         return redirect(url_for("node"))
 
-    results = get_users_active()
+    pd = phishdetect.PhishDetect(host=session.__node__["host"],
+        api_key=session.__node__["key"])
+    results = pd.users.get_active_users()
     if "error" in results:
         return render_template("error.html",
             msg="Unable to fetch users: {}".format(results["error"]))
@@ -330,13 +342,15 @@ def users_activate(api_key):
         return redirect(url_for("node"))
 
     # First we get the pending users (before activating the current).
-    users = get_users_pending()
+    pd = phishdetect.PhishDetect(host=session.__node__["host"],
+        api_key=session.__node__["key"])
+    results = pd.users.get_pending_users()
     if "error" in users:
         return render_template("error.html",
             msg="Unable to fetch pending users: {}".format(users["error"]))
 
     # Then we activate the user.
-    result = activate_user(api_key)
+    result = pd.users.activate_user(api_key)
     if "error" in result:
         return render_template("error.html",
             msg="Unable to activate user: {}".format(result["error"]))
@@ -366,13 +380,15 @@ def users_deactivate(api_key):
         return redirect(url_for("node"))
 
     # First we get the pending users (before activating the current).
-    users = get_users_active()
+    pd = phishdetect.PhishDetect(host=session.__node__["host"],
+        api_key=session.__node__["key"])
+    results = pd.users.get_active_users()
     if "error" in users:
         return render_template("error.html",
             msg="Unable to fetch pending users: {}".format(users["error"]))
 
     # Then we activate the user.
-    result = deactivate_user(api_key)
+    result = pd.users.deactivate_user(api_key)
     if "error" in result:
         return render_template("error.html",
             msg="Unable to deactivate user: {}".format(result["error"]))

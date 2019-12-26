@@ -16,7 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 description = "Web application to administer a PhishDetect Node"
 this_directory = os.path.abspath(os.path.dirname(__file__))
@@ -42,7 +42,7 @@ def get_package_data(package):
 
 setup(
     name="phishdetect-admin",
-    version="2.4",
+    version="3.0",
     author="Claudio Guarnieri",
     author_email="nex@nex.sx",
     description=description,
@@ -50,7 +50,7 @@ setup(
 
     scripts=["bin/phishdetect-admin",],
     install_requires=requires,
-    packages=["phishdetectadmin",],
+    packages=find_packages(),
     package_data=get_package_data("phishdetectadmin"),
     include_package_data=True,
     keywords="security phishing phishdetect",

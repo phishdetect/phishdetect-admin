@@ -16,7 +16,7 @@
             <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ message.user_contact }}</td>
             <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ message.key }}</td>
             <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ message.type }}</td>
-            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter"><a href="/raw/{{ message.uuid }}">{{ message.uuid }}</a> <button class="ml-2 py-1 px-2 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white" onClick="location.href='/download/{{ message.uuid }}'">Download</button></td>
+            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter"><a href="/reports/{{ message.uuid }}">{{ message.uuid }}</a> <button class="ml-2 py-1 px-2 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white" onClick="location.href='/download/{{ message.uuid }}'">Download</button></td>
         </tr>
         {% endfor %}
     </table>
