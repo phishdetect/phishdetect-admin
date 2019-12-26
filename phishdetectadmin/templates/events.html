@@ -2,9 +2,9 @@
 {% block content %}
 <div class="mt-2 mb-4">
 {% if archived %}
-<a href="/events"><i class="fas fa-exclamation-circle"></i> View new events</a>
+<a href="/events/"><i class="fas fa-exclamation-circle"></i> View new events</a>
 {% else %}
-<a href="/events?archived=yes"><i class="fas fa-archive"></i> View archived events</a>
+<a href="/events/?archived=yes"><i class="fas fa-archive"></i> View archived events</a>
 {% endif %}
 </div>
 {% if events %}

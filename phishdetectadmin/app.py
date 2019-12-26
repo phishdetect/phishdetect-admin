@@ -234,14 +234,16 @@ def indicators():
         msg = "Added {} new indicators successfully!".format(total)
         return render_template("success.html", msg=msg)
 
-# @app.route("/indicator/<string:ioc>", methods=["GET",])
-# def indicator(ioc):
-#     if not session.__node__:
-#         return redirect(url_for("node"))
+@app.route("/indicators/<string:sha256>/", methods=["GET",])
+def indicator(sha256):
+    if not session.__node__:
+        return redirect(url_for("node"))
 
-#     details = get_indicator_details(ioc)
-#     return render_template("indicator.html",
-#         node=session.__node__["host"], page="Indicator Details", details=details)
+    pd = phishdetect.PhishDetect(host=session.__node__["host"],
+        api_key=session.__node__["key"])
+    details = pd.indicators.details(sha256)
+    return render_template("indicator.html",
+        node=session.__node__["host"], page="Indicator Details", details=details)
 
 @app.route("/reports/", methods=["GET",])
 def reports():
@@ -259,7 +261,7 @@ def reports():
     return render_template("reports.html",
         node=session.__node__["host"], page="Reports", messages=results)
 
-@app.route("/reports/<string:uuid>", methods=["GET",])
+@app.route("/reports/<string:uuid>/", methods=["GET",])
 def report(uuid):
     if not session.__node__:
         return redirect(url_for("node"))
@@ -274,7 +276,7 @@ def report(uuid):
     return render_template("report.html",
         node=session.__node__["host"], page="Report", message=results)
 
-@app.route("/download/<string:uuid>", methods=["GET",])
+@app.route("/download/<string:uuid>/", methods=["GET",])
 def report_download(uuid):
     if not session.__node__:
         return redirect(url_for("node"))
@@ -336,7 +338,7 @@ def users_active():
     return render_template("users_active.html",
         node=session.__node__["host"], page="Users", users=results)
 
-@app.route("/users/activate/<string:api_key>", methods=["GET",])
+@app.route("/users/activate/<string:api_key>/", methods=["GET",])
 def users_activate(api_key):
     if not session.__node__:
         return redirect(url_for("node"))
@@ -374,7 +376,7 @@ def users_activate(api_key):
 
     return render_template("success.html", msg="The user has been activated successfully")
 
-@app.route("/users/deactivate/<string:api_key>", methods=["GET",])
+@app.route("/users/deactivate/<string:api_key>/", methods=["GET",])
 def users_deactivate(api_key):
     if not session.__node__:
         return redirect(url_for("node"))
