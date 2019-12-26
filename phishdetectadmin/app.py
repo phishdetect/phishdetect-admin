@@ -315,7 +315,7 @@ def users_pending():
 
     pd = phishdetect.PhishDetect(host=session.__node__["host"],
         api_key=session.__node__["key"])
-    results = pd.users.get_pending_users()
+    results = pd.users.get_pending()
     if "error" in results:
         return render_template("error.html",
             msg="Unable to fetch pending users: {}".format(results["error"]))
@@ -330,7 +330,7 @@ def users_active():
 
     pd = phishdetect.PhishDetect(host=session.__node__["host"],
         api_key=session.__node__["key"])
-    results = pd.users.get_active_users()
+    results = pd.users.get_active()
     if "error" in results:
         return render_template("error.html",
             msg="Unable to fetch users: {}".format(results["error"]))
@@ -346,13 +346,13 @@ def users_activate(api_key):
     # First we get the pending users (before activating the current).
     pd = phishdetect.PhishDetect(host=session.__node__["host"],
         api_key=session.__node__["key"])
-    results = pd.users.get_pending_users()
+    results = pd.users.get_pending()
     if "error" in users:
         return render_template("error.html",
             msg="Unable to fetch pending users: {}".format(users["error"]))
 
     # Then we activate the user.
-    result = pd.users.activate_user(api_key)
+    result = pd.users.activate(api_key)
     if "error" in result:
         return render_template("error.html",
             msg="Unable to activate user: {}".format(result["error"]))
@@ -384,13 +384,13 @@ def users_deactivate(api_key):
     # First we get the pending users (before activating the current).
     pd = phishdetect.PhishDetect(host=session.__node__["host"],
         api_key=session.__node__["key"])
-    results = pd.users.get_active_users()
+    results = pd.users.get_active()
     if "error" in users:
         return render_template("error.html",
             msg="Unable to fetch pending users: {}".format(users["error"]))
 
     # Then we activate the user.
-    result = pd.users.deactivate_user(api_key)
+    result = pd.users.deactivate(api_key)
     if "error" in result:
         return render_template("error.html",
             msg="Unable to deactivate user: {}".format(result["error"]))
