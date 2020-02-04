@@ -27,6 +27,7 @@ requires = (
     "Flask",
     "requests",
     "PyYAML",
+    "phishdetect",
 )
 
 def get_package_data(package):
