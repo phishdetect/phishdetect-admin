@@ -347,7 +347,7 @@ def users_activate(api_key):
     pd = phishdetect.PhishDetect(host=session.__node__["host"],
         api_key=session.__node__["key"])
     results = pd.users.get_pending()
-    if "error" in users:
+    if "error" in results:
         return render_template("error.html",
             msg="Unable to fetch pending users: {}".format(users["error"]))
 
@@ -358,7 +358,7 @@ def users_activate(api_key):
             msg="Unable to activate user: {}".format(result["error"]))
 
     email = None
-    for user in users:
+    for user in results:
         if api_key == user["key"]:
             email = user["email"]
             break
@@ -385,7 +385,7 @@ def users_deactivate(api_key):
     pd = phishdetect.PhishDetect(host=session.__node__["host"],
         api_key=session.__node__["key"])
     results = pd.users.get_active()
-    if "error" in users:
+    if "error" in results:
         return render_template("error.html",
             msg="Unable to fetch pending users: {}".format(users["error"]))
 
@@ -396,7 +396,7 @@ def users_deactivate(api_key):
             msg="Unable to deactivate user: {}".format(result["error"]))
 
     email = None
-    for user in users:
+    for user in results:
         if api_key == user["key"]:
             email = user["email"]
             break
