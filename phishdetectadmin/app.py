@@ -165,7 +165,7 @@ def alerts():
                 final.append(result)
 
     return render_template("alerts.html",
-        node=session.__node__["host"], page="Events", alerts=final, archived=archived)
+        node=session.__node__["host"], page="Alerts", alerts=final, archived=archived)
 
 @app.route("/indicators/", methods=["GET", "POST"])
 def indicators():

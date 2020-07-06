@@ -25,7 +25,7 @@
                     <td class="p-2">{% if alert.user_contact %}{{ alert.user_contact }}{% else %}n/a{% endif %}</td>
                 </tr>
                 <tr>
-                    <td class="font-bold p-2">Event Type</td>
+                    <td class="font-bold p-2">Alert Type</td>
                     <td class="p-2">
                         {% if alert.type == "email_sender" or alert.type == "email_sender_domain" %}The user received an <b>email</b> from a malicious sender
                         {% elif alert.type == "email_link" %}The user received an <b>email</b> containing a malicious link
