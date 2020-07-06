@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="mt-2 mb-4">
+{% if archived %}
+<a href="/alerts/"><i class="fas fa-exclamation-circle"></i> View new alerts</a>
+{% else %}
+<a href="/alerts/?archived=yes"><i class="fas fa-archive"></i> View archived alerts</a>
+{% endif %}
+</div>
+{% if alerts %}
+    {% for alert in alerts %}
+    {% if archived %}
+    <div class="flex p-2 mb-8 w-full rounded-lg bg-gray-100 border-l-8 border-gray-300">
+    {% else %}
+    <div class="flex p-2 mb-8 w-full rounded-lg bg-blue-100 border-l-8 border-blue-300">
+    {% endif %}
+        <div class="flex-grow">
+            <table>
+                <tr>
+                    <td class="font-bold p-2">Date</td>
+                    <td class="p-2">{{ alert.datetime }}</td>
+                </tr>
+                <tr>
+                    <td class="font-bold p-2">User</td>
+                    <td class="p-2">{% if alert.user_contact %}{{ alert.user_contact }}{% else %}n/a{% endif %}</td>
+                </tr>
+                <tr>
+                    <td class="font-bold p-2">Event Type</td>
+                    <td class="p-2">
+                        {% if alert.type == "email_sender" or alert.type == "email_sender_domain" %}The user received an <b>email</b> from a malicious sender
+                        {% elif alert.type == "email_link" %}The user received an <b>email</b> containing a malicious link
+                        {% elif alert.type == "website_visit" %}The user tried to visit a <b>malicious website</b>
+                        {% elif alert.type == "analysis" %}The user <b>scanned a page</b> that appeared suspicious
+                        {% else %}{{ alert.type }}
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="font-bold p-2">Match</td>
+                    <td class="p-2 font-mono break-words">{{ alert.match }}</td>
+                </tr>
+                <tr>
+                    <td class="font-bold p-2">Indicator</td>
+                    <td class="p-2">
+                    {% if alert.indicator %}
+                        <a href="/indicator/{{ alert.indicator }}">{{ alert.indicator }}</a>
+                    {% else %}
+                        <a href="/indicators?ioc={{ alert.match }}"><i class="fas fa-plus"></i> Add match to indicators</a>
+                    {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        {% if not archived %}<div class="float-right text-5xl"><a title="Archive this alert" href="/alerts/archive?uuid={{ alert.uuid }}"><i class="fas fa-check-square"></i></a></div>{% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+<p>No new alerts have been recorded yet.</p>
+{% endif %}
+{% endblock %}

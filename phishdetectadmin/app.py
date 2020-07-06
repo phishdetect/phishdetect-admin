@@ -20,7 +20,7 @@ import datetime
 import phishdetect
 from flask import Flask, render_template, request, redirect, url_for, send_file
 
-from .config import load_config, save_config, load_archived_events, archive_event
+from .config import load_config, save_config, load_archived_alerts, archive_alert
 from .utils import get_indicator_type, clean_indicator, extract_domain, send_email
 from . import session
 
@@ -101,42 +101,42 @@ def index():
     if not session.__node__:
         return redirect(url_for("node"))
 
-    return redirect(url_for("events"))
+    return redirect(url_for("alerts"))
 
-@app.route("/events/archive")
-def events_archive():
+@app.route("/alerts/archive")
+def alerts_archive():
     if not session.__node__:
         return redirect(url_for("node"))
 
     uuid = request.args.get("uuid", None)
     if not uuid:
-        return redirect(url_for("events"))
+        return redirect(url_for("alerts"))
 
-    archive_event(uuid)
+    archive_alert(uuid)
 
-    return redirect(url_for("events"))
+    return redirect(url_for("alerts"))
 
 
-@app.route("/events/")
-def events():
+@app.route("/alerts/")
+def alerts():
     if not session.__node__:
         return redirect(url_for("node"))
 
     try:
         pd = phishdetect.PhishDetect(host=session.__node__["host"],
             api_key=session.__node__["key"])
-        results = pd.events.fetch()
+        results = pd.alerts.fetch()
     except Exception as e:
         return render_template("error.html",
             msg="The connection to the PhishDetect Node failed: {}".format(e))
 
     if results and "error" in results:
         return render_template("error.html",
-            msg="Unable to fetch events: {}".format(results["error"]))
+            msg="Unable to fetch alerts: {}".format(results["error"]))
 
     archived = request.args.get("archived", None)
 
-    archived_events = load_archived_events()
+    archived_alerts = load_archived_alerts()
     final = []
     for result in results:
         patterns = [
@@ -158,14 +158,14 @@ def events():
             result["datetime"] = date.strftime("%Y-%m-%d %H:%M:%S %Z")
 
         if archived:
-            if result["uuid"] in archived_events:
+            if result["uuid"] in archived_alerts:
                 final.append(result)
         else:
-            if result["uuid"] not in archived_events:
+            if result["uuid"] not in archived_alerts:
                 final.append(result)
 
-    return render_template("events.html",
-        node=session.__node__["host"], page="Events", events=final, archived=archived)
+    return render_template("alerts.html",
+        node=session.__node__["host"], page="Events", alerts=final, archived=archived)
 
 @app.route("/indicators/", methods=["GET", "POST"])
 def indicators():
