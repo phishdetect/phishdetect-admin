@@ -18,7 +18,10 @@
 import os
 from setuptools import setup, find_packages
 
-description = "Web application to administer a PhishDetect Node"
+__package_name__ = "phishdetect-admin"
+__version__ = "3.3"
+__description__ = "Web application to administer a PhishDetect Node"
+
 this_directory = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(this_directory, "README.md"), encoding="utf-8") as handle:
     long_description = handle.read()
@@ -42,11 +45,11 @@ def get_package_data(package):
     return {package: filepaths}
 
 setup(
-    name="phishdetect-admin",
-    version="3.2.1",
+    name=__package_name__,
+    version=__version__,
     author="Claudio Guarnieri",
     author_email="nex@nex.sx",
-    description=description,
+    description=__description__,
     long_description=long_description,
 
     scripts=["bin/phishdetect-admin",],

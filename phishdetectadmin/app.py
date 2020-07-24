@@ -21,7 +21,7 @@ import phishdetect
 from flask import Flask, render_template, request, redirect, url_for, send_file
 
 from .config import load_config, save_config, load_archived_alerts, archive_alert
-from .utils import get_indicator_type, clean_indicator, extract_domain, send_email
+from .utils import extract_domain, send_email
 from . import session
 
 app = Flask(__name__)
@@ -197,41 +197,23 @@ def indicators():
         else:
             tags = [t.lower().strip() for t in tags_string.split(",")]
 
-        domain_indicators = []
-        email_indicators = []
-        for indicator in indicators_string.split():
-            indicator_clean = clean_indicator(indicator)
+        indicators = [i.lower().strip() for i in indicators_string.split()]
 
-            if get_indicator_type(indicator_clean) == "email":
-                email_indicators.append(indicator_clean)
-            elif get_indicator_type(indicator_clean) == "domain":
-                domain_indicators.append(indicator_clean)
-
-        domain_results = {}
-        email_results = {}
-
-        total = 0
         try:
             pd = phishdetect.PhishDetect(host=session.__node__["host"],
                 api_key=session.__node__["key"])
 
-            if domain_indicators:
-                domain_results = pd.indicators.add(domain_indicators, "domain", tags)
-                total += domain_results["counter"]
-
-            if email_indicators:
-                email_results = pd.indicators.add(email_indicators, "email", tags)
-                total += email_results["counter"]
+            results = pd.indicators.add(indicators, tags)
         except Exception as e:
             return render_template("error.html",
                 msg="The connection to the PhishDetect Node failed: {}".format(e))
 
-        if "error" in domain_results or "error" in email_results:
+        if "error" in results:
             return render_template("indicators.html",
                 page="Indicators", error=results["error"],
                 tags=tags_string, indicators=indicators_string)
 
-        msg = "Added {} new indicators successfully!".format(total)
+        msg = "Added {} new indicators successfully!".format(results["counter"])
         return render_template("success.html", msg=msg)
 
 @app.route("/indicators/<string:sha256>/", methods=["GET",])
