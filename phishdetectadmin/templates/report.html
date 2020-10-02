@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="mb-2"><b>User contact:</b> {{ report.user_contact }}</div>
+<div class="mb-2"><b>User contact:</b> {% if report.user_contact %}{{ report.user_contact }}{% else %}n/a{% endif %}</div>
 <div class="mb-4"><b>API Key:</b> {{ report.key }}</div>
-<div class="mb-4"><button class="py-2 px-4 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white" onClick="location.href='/download/{{ report.uuid }}/'">Download</button></div>
+<div class="mb-4"><button class="pd-btn" onClick="location.href='/download/{{ report.uuid }}/'">Download</button></div>
 
 <pre class="p-8 break-words bg-gray-200 rounded-xl">{{ report.content }}</pre>
 {% endblock %}

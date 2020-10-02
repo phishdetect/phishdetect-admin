@@ -4,21 +4,21 @@
 
 <div class="mt-4 mb-4">
 {% if users %}
-    <table class="w-full p-0 m-0">
+    <table class="pd-table-bordered">
         <tr>
-            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">Date</th>
-            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">User name</th>
-            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">User email</th>
-            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">API key</th>
-            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter text-center">Activate</th>
+            <th>Date</th>
+            <th>User name</th>
+            <th>User email</th>
+            <th>API key</th>
+            <th class="text-center">Activate</th>
         </tr>
         {% for user in users %}
         <tr>
-            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ user.datetime }}</td>
-            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ user.name }}</td>
-            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ user.email }}</td>
-            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ user.key }}</td>
-            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter text-center"><button class="py-1 px-2 rounded bg-blue-500 hover:bg-blue-400 cursor-pointer border-2 border-blue-500 hover:border-blue-400 text-white" onClick="confirmActivation('{{ user.key }}');">Activate</button></td>
+            <td>{{ user.datetime }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.key }}</td>
+            <td class="text-center"><button class="pd-btn" onClick="confirmActivation('{{ user.key }}');">Activate</button></td>
         </tr>
         {% endfor %}
     </table>

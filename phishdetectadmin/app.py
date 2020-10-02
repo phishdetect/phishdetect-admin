@@ -18,13 +18,17 @@
 import io
 import datetime
 import phishdetect
-from flask import Flask, render_template, request, redirect, url_for, send_file
+from flask import Flask, render_template, request, redirect, url_for, send_file, send_from_directory
 
 from .config import load_config, save_config, load_archived_alerts, archive_alert
 from .utils import extract_domain, send_email
 from . import session
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="")
+
+@app.route("/css/<path:path>")
+def css(path):
+    return send_from_directory("css", path)
 
 @app.route("/conf/", methods=["GET"])
 def conf():

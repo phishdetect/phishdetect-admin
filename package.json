@@ -1,0 +1,10 @@
+{
+  "name": "phishdetect-admin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phishdetect/phishdetect-admin.git"
+  },
+  "dependencies": {
+    "tailwindcss": "^1.8.10"
+  }
+}

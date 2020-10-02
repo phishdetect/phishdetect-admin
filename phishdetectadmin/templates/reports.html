@@ -2,32 +2,32 @@
 {% block content %}
 <div class="mt-2 mb-4">
 {% if reports %}
-    <table class="w-full p-0 m-0">
+    <table class="pd-table-bordered">
         <tr>
-            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">Date</th>
-            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">User</th>
-            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">Report Type</th>
-            <th class="text-left p-4 pt-0 border-b-4 border-gray-lighter">Content</th>
+            <th>Date</th>
+            <th>User</th>
+            <th>Report Type</th>
+            <th>Content</th>
         </tr>
         {% for report in reports %}
         <tr>
-            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">{{ report.datetime }}</td>
-            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">
+            <td>{{ report.datetime }}</td>
+            <td>
                 {% if report.user_contact %}{{ report.user_contact }}{% endif %}
                 {% if report.user_contact and report.key %}<br />{% endif %}
                 {% if report.key %}{{ report.key }}{% endif %}
             </td>
-            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">
+            <td>
                 {% if report.type == "url" %}<i class="fas fa-link"></i>
                 {% elif report.type == "email" %}<i class="far fa-envelope"></i>
                 {% endif %}{{ report.type }}
             </td>
-            <td class="break-words text-left pt-3 p-4 border-b border-gray-lighter">
+            <td>
                 {% if report.type == "url" %}
                     {{ report.content }}
                 {% else %}
-                <button class="py-1 px-2 rounded hover:bg-blue-500 cursor-pointer border-2 border-blue-500 text-blue-500 hover:text-white" onClick="location.href='/reports/view/{{ report.uuid }}/'">View</button>
-                <button class="ml-2 py-1 px-2 rounded bg-blue-500 hover:bg-blue-400 cursor-pointer border-2 border-blue-500 hover:border-blue-400 text-white" onClick="location.href='/reports/download/{{ report.uuid }}/'">Download</button>
+                <button class="pd-btn-outline" onClick="location.href='/reports/view/{{ report.uuid }}/'">View</button>
+                <button class="pd-btn ml-2" onClick="location.href='/reports/download/{{ report.uuid }}/'">Download</button>
                 {% endif %}
             </td>
         </tr>

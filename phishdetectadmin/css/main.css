@@ -1,0 +1,32 @@
+@tailwind base;
+
+table.pd-table-bordered {
+    @apply w-full p-0 m-0;
+}
+table.pd-table-bordered th {
+    @apply text-left p-4 pt-0 border-b-4 border-gray-300;
+}
+table.pd-table-bordered td {
+    @apply break-words text-left pt-3 p-4 border-b border-gray-300;
+}
+
+.pd-btn {
+    @apply py-1 px-2 rounded bg-blue-500 cursor-pointer border-2 border-blue-500 text-white;
+}
+.pd-btn:hover {
+    @apply bg-blue-600 border-blue-600;
+}
+.pd-btn-outline {
+    @apply py-1 px-2 rounded  cursor-pointer border-2 border-blue-500 text-blue-500;
+}
+.pd-btn-outline:hover {
+    @apply bg-blue-500 text-white
+}
+.pd-btn-red {
+    @apply py-1 px-2 rounded bg-red-500 border-2 cursor-pointer border-red-500 text-white;
+}
+.pd-btn-red:hover {
+    @apply bg-red-600 border-red-600;
+}
+
+@tailwind utilities;
