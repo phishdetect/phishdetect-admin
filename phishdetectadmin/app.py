@@ -172,7 +172,19 @@ def alerts():
         node=session.__node__["host"], page="Alerts", alerts=final, archived=archived)
 
 @app.route("/indicators/", methods=["GET", "POST"])
-def indicators():
+def indicators_list():
+    if not session.__node__:
+        return redirect(url_for("node"))
+
+    if request.method == "GET":
+        pd = phishdetect.PhishDetect(host=session.__node__["host"],
+            api_key=session.__node__["key"])
+
+        disabled = pd.indicators.disabled()
+        return render_template("indicators.html", disabled=disabled)
+
+@app.route("/indicators/add/", methods=["GET", "POST"])
+def indicators_add():
     if not session.__node__:
         return redirect(url_for("node"))
 
@@ -182,7 +194,7 @@ def indicators():
         if ioc:
             ioc = extract_domain(ioc)
 
-        return render_template("indicators.html", indicators=ioc, page="Indicators")
+        return render_template("indicators_add.html", indicators=ioc, page="Indicators")
     # Process new indicators to be added.
     elif request.method == "POST":
         indicators_string = request.form.get("indicators", "")
@@ -192,7 +204,7 @@ def indicators():
         tags_string = tags_string.strip()
 
         if indicators_string == "":
-            return render_template("indicators.html",
+            return render_template("indicators_add.html",
                 page="Indicators",
                 error="You didn't provide a valid list of indicators")
 

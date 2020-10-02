@@ -1,17 +1,33 @@
 {% extends "layout.html" %}
 {% block content %}
-{% if error %}
-<div class="mb-4 text-red"><b>Error!</b> {{ error }}</div>
+<a href="/indicators/add/"><i class="fas fa-plus"></i> Add <b>new</b> indicators</a>
+
+<div class="mt-4 mb-4">
+{% if disabled %}
+    <table class="pd-table-bordered">
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Original</th>
+            <th>Hashed</th>
+            <th>Tags</th>
+            <th>Owner</th>
+            <th>Enable</th>
+        </tr>
+        {% for ioc in disabled %}
+        <tr>
+            <td>{{ ioc.datetime }}</td>
+            <td>{{ ioc.type }}</td>
+            <td>{{ ioc.original }}</td>
+            <td>{{ ioc.hashed }}</td>
+            <td>{% if ioc.tags %}{{ ioc.tags }}{% endif %}</td>
+            <td>{{ ioc.owner }}</td>
+            <td><button class="pd-btn" onClick="location.href='/indicators/enable/{{ ioc.hashed }}/'">Enable</button></td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+<p>No new reports have been recorded yet.</p>
 {% endif %}
-<form method="POST" action="/indicators/">
-    <div class="mb-4">
-        <label for="indicators">List of comma-separated tags (optional):</label><br />
-        <input type="text" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" name="tags" />
-    </div>
-    <div class="mb-4">
-        <label for="indicators">List of indicators (one per line) <b>*required</b>:</label><br />
-        <textarea name="indicators" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" rows="15" cols="100">{% if indicators %}{{ indicators }}{% endif %}</textarea>
-    </div>
-    <div><input type="submit" class="py-3 px-4 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white text-lg" name="submit" value="Send indicators" /></div>
-</form>
+</div>
 {% endblock %}

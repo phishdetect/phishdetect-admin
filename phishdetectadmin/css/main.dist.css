@@ -694,6 +694,21 @@ table.pd-table-bordered td {
   border-color: rgba(229, 62, 62, var(--border-opacity));
 }
 
+.pd-input {
+  padding: 0.5rem;
+  border-width: 2px;
+  --border-opacity: 1;
+  border-color: #e2e8f0;
+  border-color: rgba(226, 232, 240, var(--border-opacity));
+  border-radius: 0.25rem;
+}
+
+.pd-input:focus {
+  --border-opacity: 1;
+  border-color: #90cdf4;
+  border-color: rgba(144, 205, 244, var(--border-opacity));
+}
+
 .space-y-0 > :not(template) ~ :not(template) {
   --space-y-reverse: 0;
   margin-top: calc(0px * calc(1 - var(--space-y-reverse)));

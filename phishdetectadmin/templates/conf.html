@@ -3,7 +3,7 @@
 <h2 class="mb-2 font-bold">Currently configured nodes</h2>
 {% if config.nodes %}
     {% for node in config.nodes %}
-    <div class="mb-4 p-4 bg-gray-300 rounded-lg">
+    <div class="mb-4 p-4 bg-gray-200 rounded-lg">
         <div><b>Host:</b> {{ node.host }}</div>
         <div><b>Key:</b> <span class="font-mono">{{ node.key }}</span></div>
     </div>
@@ -16,13 +16,13 @@
 <form method="POST" action="/conf/node/">
     <div class="mb-4">
         <label for="host">Host:</label><br />
-        <input type="text" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" name="host" value="" />
+        <input type="text" class="pd-input" name="host" value="" />
     </div>
     <div class="mb-4">
         <label for="key">API Key:</label><br />
-        <input type="key" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" name="key" value="" />
+        <input type="key" class="pd-input" name="key" value="" />
     </div>
-    <div><input type="submit" class="py-3 px-4 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white text-lg" name="submit" value="Add" /></div>
+    <div><input type="submit" class="pd-btn" name="submit" value="Add" /></div>
 </form>
 
 <hr class="mt-8 mb-8" />
@@ -32,16 +32,16 @@
 <form method="POST" action="/conf/smtp/">
     <div class="mb-4">
         <label for="smtp_host">Host:</label><br />
-        <input type="text" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" name="smtp_host" value="{{ config.smtp_host }}" />
+        <input type="text" class="pd-input" name="smtp_host" value="{{ config.smtp_host }}" />
     </div>
     <div class="mb-4">
         <label for="smtp_user">User:</label><br />
-        <input type="smtp_user" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" name="smtp_user" value="{{ config.smtp_user }}" />
+        <input type="smtp_user" class="pd-input" name="smtp_user" value="{{ config.smtp_user }}" />
     </div>
     <div class="mb-4">
         <label for="smtp_pass">Password:</label><br />
-        <input type="smtp_pass" class="p-4 border-2 border-gray rounded-lg focus:border-blue-400" name="smtp_pass" value="{{ config.smtp_pass }}" />
+        <input type="smtp_pass" class="pd-input" name="smtp_pass" value="{{ config.smtp_pass }}" />
     </div>
-    <div><input type="submit" class="py-3 px-4 rounded-lg bg-blue-500 hover:bg-blue-400 border-b-4 cursor-pointer border-blue-600 hover:border-blue-500 text-white text-lg" name="submit" value="Save" /></div>
+    <div><input type="submit" class="pd-btn" name="submit" value="Save" /></div>
 </form>
 {% endblock %}
