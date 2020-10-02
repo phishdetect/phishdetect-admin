@@ -45,7 +45,7 @@
                     {% if alert.indicator %}
                         <a href="/indicator/{{ alert.indicator }}">{{ alert.indicator }}</a>
                     {% else %}
-                        <a href="/indicators?ioc={{ alert.match }}"><i class="fas fa-plus"></i> Add match to indicators</a>
+                        <a href="/indicators/add/?ioc={{ alert.match }}"><i class="fas fa-plus"></i> Add match to indicators</a>
                     {% endif %}
                     </td>
                 </tr>
