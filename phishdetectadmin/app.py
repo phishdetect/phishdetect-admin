@@ -241,7 +241,7 @@ def reports():
             msg="Unable to fetch reports: {}".format(results["error"]))
 
     return render_template("reports.html",
-        node=session.__node__["host"], page="Reports", messages=results)
+        node=session.__node__["host"], page="Reports", reports=results)
 
 @app.route("/reports/<string:uuid>/", methods=["GET",])
 def report(uuid):
@@ -256,7 +256,7 @@ def report(uuid):
             msg="Unable to fetch report details: {}".format(results["error"]))
 
     return render_template("report.html",
-        node=session.__node__["host"], page="Report", message=results)
+        node=session.__node__["host"], page="Report", report=results)
 
 @app.route("/download/<string:uuid>/", methods=["GET",])
 def report_download(uuid):
