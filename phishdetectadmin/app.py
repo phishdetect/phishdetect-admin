@@ -243,8 +243,8 @@ def reports():
     return render_template("reports.html",
         node=session.__node__["host"], page="Reports", reports=results)
 
-@app.route("/reports/<string:uuid>/", methods=["GET",])
-def report(uuid):
+@app.route("/reports/view/<string:uuid>/", methods=["GET",])
+def report_view(uuid):
     if not session.__node__:
         return redirect(url_for("node"))
 
@@ -258,7 +258,7 @@ def report(uuid):
     return render_template("report.html",
         node=session.__node__["host"], page="Report", report=results)
 
-@app.route("/download/<string:uuid>/", methods=["GET",])
+@app.route("/reports/download/<string:uuid>/", methods=["GET",])
 def report_download(uuid):
     if not session.__node__:
         return redirect(url_for("node"))

@@ -14,14 +14,14 @@ a:hover {
 }
 </style>
 </head>
-<body class="bg-gray-lightest text-black">
+<body class="bg-gray-lightest text-gray-900 text-sm">
 <div class="p-12 w-full">
     <div class="flex">
         <ul class="list-reset flex mb-8 w-full">
             <li class="mr-6">{% if page == 'Alerts' %}<span class="text-gray-dark"><i class="fas fa-exclamation-circle"></i> Alerts</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/alerts/"><i class="fas fa-exclamation-circle"></i> Alerts</a>{% endif %}</li>
             <li class="mr-6">{% if page == 'Reports' %}<span class="text-gray-dark"><i class="fas fa-envelope"></i> Reports</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/reports/"><i class="fas fa-envelope"></i> Reports</a>{% endif %}</li>
-            <li class="mr-6">{% if page == 'Users' %}<span class="text-gray-dark"><i class="fas fa-user-plus"></i> Users</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/users/"><i class="fas fa-user-plus"></i> Users</a>{% endif %}</li>
             <li class="mr-6">{% if page == 'Indicators' %}<span class="text-gray-dark"><i class="fas fa-list-ul"></i> Indicators</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/indicators/"><i class="fas fa-list-ul"></i> Indicators</a>{% endif %}</li>
+            <li class="mr-6">{% if page == 'Users' %}<span class="text-gray-dark"><i class="fas fa-user-plus"></i> Users</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/users/"><i class="fas fa-user-plus"></i> Users</a>{% endif %}</li>
             <li class="mr-6">{% if page == 'Configuration' %}<span class="text-gray-dark"><i class="fas fa-cogs"></i> Configuration</span>{% else %}<a class="text-blue hover:text-blue-darker no-underline" href="/conf/"><i class="fas fa-cogs"></i> Configuration</a>{% endif %}</li>
         </ul>
     </div>
