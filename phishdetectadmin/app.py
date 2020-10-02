@@ -181,7 +181,7 @@ def indicators_list():
             api_key=session.__node__["key"])
 
         disabled = pd.indicators.disabled()
-        return render_template("indicators.html", disabled=disabled)
+        return render_template("indicators.html", disabled=disabled, page="Indicators")
 
 @app.route("/indicators/add/", methods=["GET", "POST"])
 def indicators_add():
@@ -194,7 +194,7 @@ def indicators_add():
         if ioc:
             ioc = extract_domain(ioc)
 
-        return render_template("indicators_add.html", indicators=ioc, page="Indicators")
+        return render_template("indicators_add.html", indicators=ioc)
     # Process new indicators to be added.
     elif request.method == "POST":
         indicators_string = request.form.get("indicators", "")

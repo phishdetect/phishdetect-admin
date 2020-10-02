@@ -6,6 +6,7 @@
 {% if disabled %}
     <table class="pd-table-bordered">
         <tr>
+            <th><a href="" title="Select all"><i class="far fa-check-square"></i></a></th>
             <th>Date</th>
             <th>Type</th>
             <th>Original</th>
@@ -16,6 +17,7 @@
         </tr>
         {% for ioc in disabled %}
         <tr>
+            <td><input type="checkbox" /></td>
             <td>{{ ioc.datetime }}</td>
             <td>{{ ioc.type }}</td>
             <td>{{ ioc.original }}</td>
