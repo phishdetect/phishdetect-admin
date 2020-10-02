@@ -1,5 +1,12 @@
 @tailwind base;
 
+a {
+    @apply text-blue-500 no-underline;
+}
+a:hover {
+    @apply underline;
+}
+
 table.pd-table-bordered {
     @apply w-full p-0 m-0;
 }

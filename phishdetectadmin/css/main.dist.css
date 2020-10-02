@@ -586,6 +586,17 @@ video {
   height: auto;
 }
 
+a {
+  --text-opacity: 1;
+  color: #4299e1;
+  color: rgba(66, 153, 225, var(--text-opacity));
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 table.pd-table-bordered {
   width: 100%;
   padding: 0;
