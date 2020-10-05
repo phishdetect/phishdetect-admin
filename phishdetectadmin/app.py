@@ -308,7 +308,8 @@ def reports():
 
     if "error" in results:
         return render_template("error.html",
-                               msg="Unable to fetch reports: {}".format(results["error"]))
+                               msg="Unable to fetch reports: {}".format(results["error"]),
+                               current_node=session.__node__)
 
     return render_template("reports.html",
                            page="Reports", reports=results,
@@ -324,7 +325,8 @@ def report_view(uuid):
     results = pd.reports.details(uuid=uuid)
     if "error" in results:
         return render_template("error.html",
-                               msg="Unable to fetch report details: {}".format(results["error"]))
+                               msg="Unable to fetch report details: {}".format(results["error"]),
+                               current_node=session.__node__)
 
     return render_template("report.html",
                            page="Report", report=results,
@@ -428,7 +430,8 @@ def users_activate(api_key):
             break
 
     if not email:
-        return render_template("error.html", msg="User not found",
+        return render_template("error.html",
+                               msg="User not found",
                                current_node=session.__node__)
 
     message = "Your PhishDetect secret token has been activated!"
@@ -440,7 +443,8 @@ def users_activate(api_key):
                                msg="Failed to send email to user: {}".format(e),
                                current_node=session.__node__)
 
-    return render_template("success.html", msg="The user has been activated successfully",
+    return render_template("success.html",
+                           msg="The user has been activated successfully",
                            current_node=session.__node__)
 
 @app.route("/users/deactivate/<string:api_key>/", methods=["GET",])
