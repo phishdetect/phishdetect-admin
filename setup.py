@@ -19,7 +19,7 @@ import os
 from setuptools import setup, find_packages
 
 __package_name__ = "phishdetect-admin"
-__version__ = "3.3"
+__version__ = "4.0"
 __description__ = "Web application to administer a PhishDetect Node"
 
 this_directory = os.path.abspath(os.path.dirname(__file__))
