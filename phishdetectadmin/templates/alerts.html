@@ -43,7 +43,7 @@
                     <td class="font-bold p-2">Indicator</td>
                     <td class="p-2">
                     {% if alert.indicator %}
-                        <a href="/indicator/{{ alert.indicator }}">{{ alert.indicator }}</a>
+                        <a href="/indicators/view/{{ alert.indicator }}">{{ alert.indicator }}</a>
                     {% else %}
                         <a href="/indicators/add/?ioc={{ alert.match }}"><i class="fas fa-plus"></i> Add match to indicators</a>
                     {% endif %}

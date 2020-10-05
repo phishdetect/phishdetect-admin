@@ -2,11 +2,13 @@
 {% block content %}
 <a href="/indicators/add/"><i class="fas fa-plus"></i> Add <b>new</b> indicators</a>
 
-<div class="mt-4 mb-4">
+<div class="mt-6 mb-4">
 {% if disabled %}
+    <div id="error" class="hidden text-red-500 mb-4"><b>Error!</b> <span id="errorMsg"></span></div>
+
     <table class="pd-table-bordered">
         <tr>
-            <th><a href="" title="Select all"><i class="far fa-check-square"></i></a></th>
+            <th><input type="checkbox" name="" value="" id="toggleAll" /></th>
             <th>Date</th>
             <th>Type</th>
             <th>Original</th>
@@ -17,19 +19,76 @@
         </tr>
         {% for ioc in disabled %}
         <tr>
-            <td><input type="checkbox" /></td>
+            <td><input type="checkbox" name="" value="{{ ioc.hashed }}" /></td>
             <td>{{ ioc.datetime }}</td>
             <td>{{ ioc.type }}</td>
             <td>{{ ioc.original }}</td>
             <td>{{ ioc.hashed }}</td>
-            <td>{% if ioc.tags %}{{ ioc.tags }}{% endif %}</td>
+            <td>
+                {% if ioc.tags %}
+                    {% for tag in ioc.tags %}
+                        {{ tag }}&nbsp;
+                    {% endfor %}
+                {% endif %}
+            </td>
             <td>{{ ioc.owner }}</td>
-            <td><button class="pd-btn" onClick="location.href='/indicators/enable/{{ ioc.hashed }}/'">Enable</button></td>
+            <td><button class="pd-btn enable-btn" value="{{ ioc.hashed }}">Enable</button></td>
         </tr>
         {% endfor %}
     </table>
+
+    <div class="mt-4"><button class="pd-btn" id="enableSelected">Enable all selected</button></div>
 {% else %}
 <p>There are no disabled indicators to enable.</p>
 {% endif %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$("#toggleAll").click(function() {
+    $("input:checkbox").not(this).prop("checked", this.checked)
+});
+
+function toggleIndicators(iocs) {
+    if (iocs.length == 0) {
+        alert("You did not select any indicators to enable!");
+        return;
+    }
+
+    var data = {"iocs": iocs};
+
+    $.ajax({
+        url: "/indicators/toggle/",
+        type: "POST",
+        async: true,
+        cache: false,
+        data: JSON.stringify(data, null, "\t"),
+        contentType: "application/json;charset=UTF-8",
+    })
+    .done(function() {
+        location.reload(true);
+    })
+    .fail(function(data) {
+        console.log(data);
+        $("#errorMsg").text("FAILED!");
+        $("#error").show();
+    });
+}
+
+$("#enableSelected").click(function() {
+    var iocs = []
+    $(":checked").not("#toggleAll").each(function() {
+        iocs.push($(this).val());
+    })
+
+    toggleIndicators(iocs);
+});
+
+$(".enable-btn").click(function() {
+    var iocs = []
+    iocs.push($(this).val());
+    toggleIndicators(iocs);
+})
+</script>
 {% endblock %}

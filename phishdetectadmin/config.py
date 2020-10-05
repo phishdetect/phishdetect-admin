@@ -27,7 +27,7 @@ def load_config():
         return None
 
     with open(config_path, "r") as handle:
-        return yaml.load(handle)
+        return yaml.load(handle, Loader=yaml.FullLoader)
 
 def save_config(config):
     with open(config_path, "w") as handle:

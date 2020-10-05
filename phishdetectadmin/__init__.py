@@ -39,7 +39,7 @@ A browser page will be launched in few seconds.
 You can find more information about PhishDetect at: https://phishdetect.io
     """)
 
-def main():
+def main(debug=False):
     logo()
     
     # We make sure we have the configuration folder.
@@ -52,6 +52,11 @@ def main():
 
     # We launch a browser with some delay.
     threading.Timer(1.25, lambda: webbrowser.open(url) ).start()
+
+    if debug:
+        app.config["ENV"] = "development"
+        app.config["DEBUG"] = True
+        app.config["TESTING"] = True
 
     # We launch the Flask app.
     app.run(port=port, debug=False)
