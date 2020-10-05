@@ -18,7 +18,8 @@
 import io
 import datetime
 import phishdetect
-from flask import Flask, render_template, request, redirect, url_for, send_file, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for
+from flask import send_file, send_from_directory
 
 from .config import load_config, save_config, load_archived_alerts, archive_alert
 from .utils import extract_domain, send_email
@@ -42,7 +43,9 @@ def css(path):
 #==============================================================================
 @app.route("/conf/", methods=["GET"])
 def conf():
-    return render_template("conf.html", page="Configuration", config=load_config())
+    return render_template("conf.html", page="Configuration",
+                           config=load_config(),
+                           current_node=session.__node__)
 
 @app.route("/conf/node/", methods=["POST"])
 def conf_node():
@@ -93,7 +96,9 @@ def node():
             return redirect(url_for("conf"))
 
         nodes = config["nodes"]
-        return render_template("node.html", page="Node Selection", nodes=nodes)
+
+        return render_template("node.html", page="Node Selection", nodes=nodes,
+                               current_node=session.__node__)
     elif request.method == "POST":
         host = request.form.get("host")
 
@@ -134,11 +139,13 @@ def alerts():
         results = pd.alerts.fetch()
     except Exception as e:
         return render_template("error.html",
-                               msg="The connection to the PhishDetect Node failed: {}".format(e))
+                               msg="The connection to the PhishDetect Node failed: {}".format(e),
+                               current_node=session.__node__)
 
     if results and "error" in results:
         return render_template("error.html",
-                               msg="Unable to fetch alerts: {}".format(results["error"]))
+                               msg="Unable to fetch alerts: {}".format(results["error"]),
+                               current_node=session.__node__)
 
     archived = request.args.get("archived", None)
 
@@ -171,8 +178,9 @@ def alerts():
                 final.append(result)
 
     return render_template("alerts.html",
-                           node=session.__node__["host"], page="Alerts",
-                           alerts=final, archived=archived)
+                           page="Alerts",
+                           alerts=final, archived=archived,
+                           current_node=session.__node__)
 
 @app.route("/alerts/archive")
 def alerts_archive():
@@ -201,7 +209,8 @@ def indicators_list():
 
         disabled = pd.indicators.disabled()
         return render_template("indicators.html", disabled=disabled,
-                               page="Indicators")
+                               page="Indicators",
+                               current_node=session.__node__)
 
 @app.route("/indicators/toggle/", methods=["POST"])
 def indicators_toggle():
@@ -228,7 +237,8 @@ def indicators_add():
             ioc = extract_domain(ioc)
 
         return render_template("indicators_add.html", indicators=ioc,
-                               page="Add Indicators")
+                               page="Add Indicators",
+                               current_node=session.__node__)
     # Process new indicators to be added.
     elif request.method == "POST":
         enabled = bool(request.form.get("enabled", False))
@@ -241,7 +251,8 @@ def indicators_add():
         if indicators_string == "":
             return render_template("indicators_add.html",
                                    page="Add Indicators",
-                                   error="You didn't provide a valid list of indicators")
+                                   error="You didn't provide a valid list of indicators",
+                                   current_node=session.__node__)
 
         if tags_string == "":
             tags = []
@@ -258,12 +269,14 @@ def indicators_add():
                                         enabled=enabled)
         except Exception as e:
             return render_template("error.html",
-                msg="The connection to the PhishDetect Node failed: {}".format(e))
+                                   msg="The connection to the PhishDetect Node failed: {}".format(e),
+                                   current_node=session.__node__)
 
         if "error" in results:
             return render_template("indicators_add.html",
                                    page="Indicators", error=results["error"],
-                                   tags=tags_string, indicators=indicators_string)
+                                   tags=tags_string, indicators=indicators_string,
+                                   current_node=session.__node__)
 
         msg = "Added {} new indicators successfully!".format(results["counter"])
         return render_template("success.html", msg=msg)
@@ -276,8 +289,10 @@ def indicators_view(sha256):
     pd = phishdetect.PhishDetect(host=session.__node__["host"],
                                  api_key=session.__node__["key"])
     details = pd.indicators.details(sha256)
-    return render_template("indicator.html", node=session.__node__["host"],
-                           page="Indicator Details", details=details)
+
+    return render_template("indicator.html",
+                           page="Indicator Details", details=details,
+                           current_node=session.__node__)
 
 #==============================================================================
 # Reports
@@ -295,8 +310,9 @@ def reports():
         return render_template("error.html",
                                msg="Unable to fetch reports: {}".format(results["error"]))
 
-    return render_template("reports.html", node=session.__node__["host"],
-                           page="Reports", reports=results)
+    return render_template("reports.html",
+                           page="Reports", reports=results,
+                           current_node=session.__node__)
 
 @app.route("/reports/view/<string:uuid>/", methods=["GET",])
 def report_view(uuid):
@@ -310,8 +326,9 @@ def report_view(uuid):
         return render_template("error.html",
                                msg="Unable to fetch report details: {}".format(results["error"]))
 
-    return render_template("report.html", node=session.__node__["host"],
-                           page="Report", report=results)
+    return render_template("report.html",
+                           page="Report", report=results,
+                           current_node=session.__node__)
 
 @app.route("/reports/download/<string:uuid>/", methods=["GET",])
 def report_download(uuid):
@@ -323,11 +340,14 @@ def report_download(uuid):
     results = pd.reports.details(uuid=uuid)
     if "error" in results:
         return render_template("error.html",
-                               msg="Unable to fetch report details: {}".format(results["error"]))
+                               msg="Unable to fetch report details: {}".format(results["error"]),
+                               current_node=session.__node__)
 
     content = results["content"]
     if content.strip() == "":
-        return render_template("error.html", msg="The fetched message seems empty")
+        return render_template("error.html",
+                               msg="The fetched message seems empty",
+                               current_node=session.__node__)
 
     mem = io.BytesIO()
     mem.write(content.encode("utf-8"))
@@ -356,10 +376,12 @@ def users_pending():
     results = pd.users.get_pending()
     if "error" in results:
         return render_template("error.html",
-                               msg="Unable to fetch pending users: {}".format(results["error"]))
+                               msg="Unable to fetch pending users: {}".format(results["error"]),
+                               current_node=session.__node__)
 
-    return render_template("users_pending.html", node=session.__node__["host"],
-                           page="Users", users=results)
+    return render_template("users_pending.html",
+                           page="Users", users=results,
+                           current_node=session.__node__)
 
 @app.route("/users/active/", methods=["GET",])
 def users_active():
@@ -371,10 +393,12 @@ def users_active():
     results = pd.users.get_active()
     if "error" in results:
         return render_template("error.html",
-                               msg="Unable to fetch users: {}".format(results["error"]))
+                               msg="Unable to fetch users: {}".format(results["error"]),
+                               current_node=session.__node__)
 
-    return render_template("users_active.html", node=session.__node__["host"],
-                           page="Users", users=results)
+    return render_template("users_active.html",
+                           page="Users", users=results,
+                           current_node=session.__node__)
 
 @app.route("/users/activate/<string:api_key>/", methods=["GET",])
 def users_activate(api_key):
@@ -387,13 +411,15 @@ def users_activate(api_key):
     results = pd.users.get_pending()
     if "error" in results:
         return render_template("error.html",
-                               msg="Unable to fetch pending users: {}".format(users["error"]))
+                               msg="Unable to fetch pending users: {}".format(users["error"]),
+                               current_node=session.__node__)
 
     # Then we activate the user.
     result = pd.users.activate(api_key)
     if "error" in result:
         return render_template("error.html",
-                               msg="Unable to activate user: {}".format(result["error"]))
+                               msg="Unable to activate user: {}".format(result["error"]),
+                               current_node=session.__node__)
 
     email = None
     for user in results:
@@ -402,7 +428,8 @@ def users_activate(api_key):
             break
 
     if not email:
-        return render_template("error.html", msg="User not found")
+        return render_template("error.html", msg="User not found",
+                               current_node=session.__node__)
 
     message = "Your PhishDetect secret token has been activated!"
 
@@ -410,9 +437,11 @@ def users_activate(api_key):
         send_email(email, "Your PhishDetect secret token has been activated", message)
     except Exception as e:
         return render_template("error.html",
-                               msg="Failed to send email to user: {}".format(e))
+                               msg="Failed to send email to user: {}".format(e),
+                               current_node=session.__node__)
 
-    return render_template("success.html", msg="The user has been activated successfully")
+    return render_template("success.html", msg="The user has been activated successfully",
+                           current_node=session.__node__)
 
 @app.route("/users/deactivate/<string:api_key>/", methods=["GET",])
 def users_deactivate(api_key):
@@ -425,13 +454,15 @@ def users_deactivate(api_key):
     results = pd.users.get_active()
     if "error" in results:
         return render_template("error.html",
-                               msg="Unable to fetch pending users: {}".format(users["error"]))
+                               msg="Unable to fetch pending users: {}".format(users["error"]),
+                               current_node=session.__node__)
 
     # Then we activate the user.
     result = pd.users.deactivate(api_key)
     if "error" in result:
         return render_template("error.html",
-                               msg="Unable to deactivate user: {}".format(result["error"]))
+                               msg="Unable to deactivate user: {}".format(result["error"]),
+                               current_node=session.__node__)
 
     email = None
     for user in results:
@@ -440,7 +471,8 @@ def users_deactivate(api_key):
             break
 
     if not email:
-        return render_template("error.html", msg="User not found")
+        return render_template("error.html", msg="User not found",
+                               current_node=session.__node__)
 
     message = "Your PhishDetect secret token has been deactivated!\n\
 If you have any questions, please contact your PhishDetect Node administrator."
@@ -449,6 +481,9 @@ If you have any questions, please contact your PhishDetect Node administrator."
         send_email(email, "Your PhishDetect secret token has been deactivated", message)
     except Exception as e:
         return render_template("error.html",
-                               msg="Failed to send email to user: {}".format(e))
+                               msg="Failed to send email to user: {}".format(e),
+                               current_node=session.__node__)
 
-    return render_template("success.html", msg="The user has been deactivated successfully")
+    return render_template("success.html",
+                           msg="The user has been deactivated successfully",
+                           current_node=session.__node__)

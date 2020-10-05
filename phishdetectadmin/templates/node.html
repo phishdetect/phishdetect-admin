@@ -2,9 +2,11 @@
 {% block content %}
 <form method="POST" action="/node/">
     <select name="host" class="p-2 rounded bg-gray-300">
-        {% for node in nodes %}
-        <option>{{ node.host }}</option>
-        {% endfor %}
+    {% for node in nodes %}
+        {% if current_node and node.host == current_node["host"] %}<option selected>{{ node.host }} (current)</option>
+        {% else %}<option>{{ node.host }}</option>
+        {% endif %}
+    {% endfor %}
     </select>
     <span class="ml-4"><input type="submit" class="pd-btn" name="submit" value="Select" /></span>
 </form>
