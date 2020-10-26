@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="mb-2"><b>User contact:</b> {% if report.user_contact %}{{ report.user_contact }}{% else %}n/a{% endif %}</div>
-<div class="mb-4"><b>API Key:</b> {{ report.key }}</div>
+<div class="mb-4"><b>User UUID:</b> {{ report.user }}</div>
 <div class="mb-4"><button class="pd-btn" onClick="location.href='/download/{{ report.uuid }}/'">Download</button></div>
 
 <pre class="p-8 break-words bg-gray-200 rounded-xl">{{ report.content }}</pre>

@@ -9,7 +9,7 @@
             <th>Date</th>
             <th>User name</th>
             <th>User email</th>
-            <th>API key</th>
+            <th>UUID</th>
             <th class="text-center">Activate</th>
         </tr>
         {% for user in users %}
@@ -17,8 +17,8 @@
             <td>{{ user.datetime }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.email }}</td>
-            <td>{{ user.key }}</td>
-            <td class="text-center"><button class="pd-btn" onClick="confirmActivation('{{ user.key }}');">Activate</button></td>
+            <td>{{ user.uuid }}</td>
+            <td class="text-center"><button class="pd-btn" onClick="confirmActivation('{{ user.uuid }}');">Activate</button></td>
         </tr>
         {% endfor %}
     </table>
@@ -30,9 +30,9 @@
 
 {% block scripts %}
 <script>
-function confirmActivation(key) {
+function confirmActivation(uuid) {
     if (confirm("Are you sure?")) {
-        location.href = "/users/activate/" + key + "/";
+        location.href = "/users/activate/" + uuid + "/";
     }
 }
 </script>

@@ -22,7 +22,11 @@
                 </tr>
                 <tr>
                     <td class="font-bold p-2">User</td>
-                    <td class="p-2">{% if alert.user_contact %}{{ alert.user_contact }}{% else %}n/a{% endif %}</td>
+                    <td class="p-2">
+                        {% if alert.user_contact %}{{ alert.user_contact }}{% endif %}
+                        {% if alert.user_contact and alert.user %}<br />{% endif %}
+                        {% if alert.user %}{{ alert.user }}{% endif %}
+                    </td>
                 </tr>
                 <tr>
                     <td class="font-bold p-2">Alert Type</td>

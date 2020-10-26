@@ -402,8 +402,8 @@ def users_active():
                            page="Users", users=results,
                            current_node=session.__node__)
 
-@app.route("/users/activate/<string:api_key>/", methods=["GET",])
-def users_activate(api_key):
+@app.route("/users/activate/<string:uuid>/", methods=["GET",])
+def users_activate(uuid):
     if not session.__node__:
         return redirect(url_for("node"))
 
@@ -417,7 +417,7 @@ def users_activate(api_key):
                                current_node=session.__node__)
 
     # Then we activate the user.
-    result = pd.users.activate(api_key)
+    result = pd.users.activate(uuid)
     if "error" in result:
         return render_template("error.html",
                                msg="Unable to activate user: {}".format(result["error"]),
@@ -425,7 +425,7 @@ def users_activate(api_key):
 
     email = None
     for user in results:
-        if api_key == user["key"]:
+        if uuid == user["uuid"]:
             email = user["email"]
             break
 
@@ -447,8 +447,8 @@ def users_activate(api_key):
                            msg="The user has been activated successfully",
                            current_node=session.__node__)
 
-@app.route("/users/deactivate/<string:api_key>/", methods=["GET",])
-def users_deactivate(api_key):
+@app.route("/users/deactivate/<string:uuid>/", methods=["GET",])
+def users_deactivate(uuid):
     if not session.__node__:
         return redirect(url_for("node"))
 
@@ -462,7 +462,7 @@ def users_deactivate(api_key):
                                current_node=session.__node__)
 
     # Then we activate the user.
-    result = pd.users.deactivate(api_key)
+    result = pd.users.deactivate(uuid)
     if "error" in result:
         return render_template("error.html",
                                msg="Unable to deactivate user: {}".format(result["error"]),
@@ -470,7 +470,7 @@ def users_deactivate(api_key):
 
     email = None
     for user in results:
-        if api_key == user["key"]:
+        if uuid == user["uuid"]:
             email = user["email"]
             break
 

@@ -14,8 +14,8 @@
             <td>{{ report.datetime }}</td>
             <td>
                 {% if report.user_contact %}{{ report.user_contact }}{% endif %}
-                {% if report.user_contact and report.key %}<br />{% endif %}
-                {% if report.key %}{{ report.key }}{% endif %}
+                {% if report.user_contact and report.user %}<br />{% endif %}
+                {% if report.user %}{{ report.user }}{% endif %}
             </td>
             <td>
                 {% if report.type == "url" %}<i class="fas fa-link"></i>
