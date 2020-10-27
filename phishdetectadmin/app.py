@@ -198,8 +198,8 @@ def alerts_archive():
 #==============================================================================
 # Indicators
 #==============================================================================
-@app.route("/indicators/", methods=["GET", "POST"])
-def indicators_list():
+@app.route("/indicators/pending/", methods=["GET", "POST"])
+def indicators_pending():
     if not session.__node__:
         return redirect(url_for("node"))
 
@@ -207,19 +207,48 @@ def indicators_list():
         pd = phishdetect.PhishDetect(host=session.__node__["host"],
                                      api_key=session.__node__["key"])
 
-        disabled = pd.indicators.disabled()
-        return render_template("indicators.html", disabled=disabled,
-                               page="Indicators",
+        iocs = pd.indicators.get_pending()
+        return render_template("indicators_list.html", iocs=iocs,
+                               status="pending",
+                               page="Pending Indicators",
                                current_node=session.__node__)
 
-@app.route("/indicators/toggle/", methods=["POST"])
-def indicators_toggle():
+@app.route("/indicators/disabled/", methods=["GET", "POST"])
+def indicators_disabled():
+    if not session.__node__:
+        return redirect(url_for("node"))
+
+    if request.method == "GET":
+        pd = phishdetect.PhishDetect(host=session.__node__["host"],
+                                     api_key=session.__node__["key"])
+
+        iocs = pd.indicators.get_disabled()
+        return render_template("indicators_list.html", iocs=iocs,
+                               status="disabled",
+                               page="Disabled Indicators",
+                               current_node=session.__node__)
+
+@app.route("/indicators/enable/", methods=["POST"])
+def indicators_enable():
     content = request.json
     iocs = content["iocs"]
 
     pd = phishdetect.PhishDetect(host=session.__node__["host"],
                                  api_key=session.__node__["key"])
-    result = pd.indicators.toggle(iocs)
+    result = pd.indicators.enable(iocs)
+    if "error" in result:
+        return abort(Response(result["error"]))
+
+    return ("", 200)
+
+@app.route("/indicators/disable/", methods=["POST"])
+def indicators_disable():
+    content = request.json
+    iocs = content["iocs"]
+
+    pd = phishdetect.PhishDetect(host=session.__node__["host"],
+                                 api_key=session.__node__["key"])
+    result = pd.indicators.disable(iocs)
     if "error" in result:
         return abort(Response(result["error"]))
 

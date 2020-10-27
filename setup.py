@@ -19,7 +19,7 @@ import os
 from setuptools import setup, find_packages
 
 __package_name__ = "phishdetect-admin"
-__version__ = "5.0"
+__version__ = "5.2"
 __description__ = "Web application to administer a PhishDetect Node"
 
 this_directory = os.path.abspath(os.path.dirname(__file__))
@@ -30,7 +30,7 @@ requires = (
     "Flask",
     "requests",
     "PyYAML",
-    "phishdetect>=1.8",
+    "phishdetect>=1.8.2",
 )
 
 def get_package_data(package):

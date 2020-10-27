@@ -1,9 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
-<a href="/indicators/add/"><i class="fas fa-plus"></i> Add <b>new</b> indicators</a>
+<div><a href="/indicators/add/"><i class="fas fa-plus"></i> Add <b>new</b> indicators</a></div>
+{% if status == "pending" %}<div class="mt-2"><a href="/indicators/disabled/"><i class="fas fa-toggle-off"></i> Check indicators that have been <b>disabled</b></a></div>
+{% elif status == "disabled" %}<div class="mt-2"><a href="/indicators/pending/"><i class="far fa-pause-circle"></i> Check <b>pending</b> indicators</a></div>
+{% endif %}
 
 <div class="mt-6 mb-4">
-{% if disabled %}
+{% if iocs %}
     <div id="error" class="hidden text-red-500 mb-4"><b>Error!</b> <span id="errorMsg"></span></div>
 
     <table class="pd-table-bordered">
@@ -15,9 +18,9 @@
             <th>Hashed</th>
             <th>Tags</th>
             <th>Owner</th>
-            <th>Enable</th>
+            <th>Actions</th>
         </tr>
-        {% for ioc in disabled %}
+        {% for ioc in iocs %}
         <tr>
             <td><input type="checkbox" name="" value="{{ ioc.hashed }}" /></td>
             <td>{{ ioc.datetime }}</td>
@@ -32,14 +35,20 @@
                 {% endif %}
             </td>
             <td>{{ ioc.owner }}</td>
-            <td><button class="pd-btn enable-btn" value="{{ ioc.hashed }}">Enable</button></td>
+            <td>
+                <button class="pd-btn enable-btn" value="{{ ioc.hashed }}">Enable</button>
+                {% if status != "disabled" %}<button class="pd-btn-red disable-btn" value="{{ ioc.hashed }}">Disable</button>{% endif %}
+            </td>
         </tr>
         {% endfor %}
     </table>
 
-    <div class="mt-4"><button class="pd-btn" id="enableSelected">Enable all selected</button></div>
+    <div class="mt-4">
+        <button class="pd-btn" id="enableSelected">Enable all selected</button>
+        {% if status != "disabled" %}<button class="pd-btn-red" id="disableSelected">Disable all selected</button>{% endif %}
+    </div>
 {% else %}
-<p>There are no disabled indicators to enable.</p>
+<p>There are no {{status}} indicators to enable.</p>
 {% endif %}
 </div>
 {% endblock %}
@@ -50,16 +59,23 @@ $("#toggleAll").click(function() {
     $("input:checkbox").not(this).prop("checked", this.checked)
 });
 
-function toggleIndicators(iocs) {
+function changeIndicatorsStatus(iocs, action) {
     if (iocs.length == 0) {
         alert("You did not select any indicators to enable!");
         return;
     }
 
+    if (action == "enable")
+        var url = "/indicators/enable/";
+    else
+        var url = "/indicators/disable/";
+
+    console.log(url);
+
     var data = {"iocs": iocs};
 
     $.ajax({
-        url: "/indicators/toggle/",
+        url: url,
         type: "POST",
         async: true,
         cache: false,
@@ -76,19 +92,42 @@ function toggleIndicators(iocs) {
     });
 }
 
+function enableIndicators(iocs) {
+    console.log("ENABLING INDICATORS");
+    changeIndicatorsStatus(iocs, "enable");
+}
+
+function disableIndicators(iocs) {
+    console.log("DISABLING INDICATORS");
+    changeIndicatorsStatus(iocs, "disable");
+}
+
 $("#enableSelected").click(function() {
     var iocs = []
     $(":checked").not("#toggleAll").each(function() {
         iocs.push($(this).val());
     })
 
-    toggleIndicators(iocs);
+    enableIndicators(iocs);
+});
+$("#disableSelected").click(function() {
+    var iocs = []
+    $(":checked").not("#toggleAll").each(function() {
+        iocs.push($(this).val());
+    })
+
+    disableIndicators(iocs);
 });
 
 $(".enable-btn").click(function() {
     var iocs = []
     iocs.push($(this).val());
-    toggleIndicators(iocs);
+    enableIndicators(iocs);
+})
+$(".disable-btn").click(function() {
+    var iocs = []
+    iocs.push($(this).val());
+    disableIndicators(iocs);
 })
 </script>
 {% endblock %}
