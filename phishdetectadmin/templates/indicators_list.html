@@ -70,8 +70,6 @@ function changeIndicatorsStatus(iocs, action) {
     else
         var url = "/indicators/disable/";
 
-    console.log(url);
-
     var data = {"iocs": iocs};
 
     $.ajax({
@@ -86,19 +84,16 @@ function changeIndicatorsStatus(iocs, action) {
         location.reload(true);
     })
     .fail(function(data) {
-        console.log(data);
         $("#errorMsg").text("FAILED!");
         $("#error").show();
     });
 }
 
 function enableIndicators(iocs) {
-    console.log("ENABLING INDICATORS");
     changeIndicatorsStatus(iocs, "enable");
 }
 
 function disableIndicators(iocs) {
-    console.log("DISABLING INDICATORS");
     changeIndicatorsStatus(iocs, "disable");
 }
 
