@@ -1,0 +1,71 @@
+<script>
+$("#toggleAll").click(function() {
+    $("input:checkbox").not(this).prop("checked", this.checked)
+});
+
+function changeIndicatorsStatus(iocs, action) {
+    if (iocs.length == 0) {
+        alert("You did not select any indicators to enable!");
+        return;
+    }
+
+    if (action == "enable")
+        var url = "/indicators/enable/";
+    else
+        var url = "/indicators/disable/";
+
+    var data = {"iocs": iocs};
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        async: true,
+        cache: false,
+        data: JSON.stringify(data, null, "\t"),
+        contentType: "application/json;charset=UTF-8",
+    })
+    .done(function() {
+        location.reload(true);
+    })
+    .fail(function(data) {
+        $("#errorMsg").text("FAILED!");
+        $("#error").show();
+    });
+}
+
+function enableIndicators(iocs) {
+    changeIndicatorsStatus(iocs, "enable");
+}
+
+function disableIndicators(iocs) {
+    changeIndicatorsStatus(iocs, "disable");
+}
+
+$("#enableSelected").click(function() {
+    var iocs = []
+    $(":checked").not("#toggleAll").each(function() {
+        iocs.push($(this).val());
+    })
+
+    enableIndicators(iocs);
+});
+$("#disableSelected").click(function() {
+    var iocs = []
+    $(":checked").not("#toggleAll").each(function() {
+        iocs.push($(this).val());
+    })
+
+    disableIndicators(iocs);
+});
+
+$(".enable-btn").click(function() {
+    var iocs = []
+    iocs.push($(this).val());
+    enableIndicators(iocs);
+})
+$(".disable-btn").click(function() {
+    var iocs = []
+    iocs.push($(this).val());
+    disableIndicators(iocs);
+})
+</script>

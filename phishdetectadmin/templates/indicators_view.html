@@ -1,27 +1,39 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="p-2 mb-8 w-full rounded-lg bg-gray-200 border-l-8 border-blue-300">
+<div id="error" class="hidden text-red-500 mb-4"><b>Error!</b> <span id="errorMsg"></span></div>
+
+<div class="mb-4 w-full">
     <table>
         <tr>
-            <td class="font-bold p-2">Original:</td>
-            <td class="p-2">{{ details.original }}</td>
+            <td class="font-bold py-2">Original:</td>
+            <td class="py-2">{{ ioc.original }}</td>
         </tr>
         <tr>
-            <td class="font-bold p-2">Hashed:</td>
-            <td class="p-2">{{ details.hashed }}</td>
+            <td class="font-bold py-2">Hashed:</td>
+            <td class="py-2">{{ ioc.hashed }}</td>
         </tr>
         <tr>
-            <td class="font-bold p-2">Tags:</td>
-            <td class="p-2">{% for tag in details.tags %}{{ tag }} {% endfor %}</td>
+            <td class="font-bold py-2">Tags:</td>
+            <td class="py-2">{% for tag in ioc.tags %}{{ tag }} {% endfor %}</td>
         </tr>
         <tr>
-            <td class="font-bold p-2">Owner:</td>
-            <td class="p-2">{{ details.owner }}</td>
+            <td class="font-bold py-2">Owner:</td>
+            <td class="py-2">{{ ioc.owner }}</td>
         </tr>
         <tr>
-            <td class="font-bold p-2">Creation date:</td>
-            <td class="p-2">{{ details.datetime }}</td>
+            <td class="font-bold py-2">Creation date:</td>
+            <td class="py-2">{{ ioc.datetime }}</td>
         </tr>
+        <tr>
+            <td class="font-bold py-2">Status:</td>
+            <td class="py-2">{{ ioc.status }}</td>
     </table>
 </div>
+{% if ioc.status == "enabled" %}<button class="pd-btn-red disable-btn" value="{{ ioc.hashed }}">Disable</button>
+{% else %}<button class="pd-btn enable-btn" value="{{ ioc.hashed }}">Enable</button>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% include "indicators_controls.html" %}
 {% endblock %}

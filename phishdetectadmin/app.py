@@ -317,10 +317,15 @@ def indicators_view(sha256):
 
     pd = phishdetect.PhishDetect(host=session.__node__["host"],
                                  api_key=session.__node__["key"])
-    details = pd.indicators.details(sha256)
+    results = pd.indicators.details(sha256)
 
-    return render_template("indicator.html",
-                           page="Indicator Details", details=details,
+    if "error" in results:
+        return render_template("error.html",
+                               msg="Unable to fetch indicator details: {}".format(results["error"]),
+                               current_node=session.__node__)
+
+    return render_template("indicators_view.html",
+                           page="Indicator Details", ioc=results,
                            current_node=session.__node__)
 
 #==============================================================================
