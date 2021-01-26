@@ -18,7 +18,13 @@
             <td>{{ user.name }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.uuid }}</td>
-            <td class="text-center"><button class="pd-btn" onClick="confirmActivation('{{ user.uuid }}');">Activate</button></td>
+            <td class="text-center">
+                <form method="POST" action="/users/activate/">
+                    <input type="hidden" name="uuid" value="{{ user.uuid }}"/>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <input type="submit" class="pd-btn" value="Activate">
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -28,12 +34,3 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script>
-function confirmActivation(uuid) {
-    if (confirm("Are you sure?")) {
-        location.href = "/users/activate/" + uuid + "/";
-    }
-}
-</script>
-{% endblock %}

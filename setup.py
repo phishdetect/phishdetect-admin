@@ -19,7 +19,7 @@ import os
 from setuptools import setup, find_packages
 
 __package_name__ = "phishdetect-admin"
-__version__ = "5.2.1"
+__version__ = "5.3.0"
 __description__ = "Web application to administer a PhishDetect Node"
 
 this_directory = os.path.abspath(os.path.dirname(__file__))
@@ -28,6 +28,7 @@ with open(os.path.join(this_directory, "README.md"), encoding="utf-8") as handle
 
 requires = (
     "Flask",
+    "flask_wtf",
     "requests",
     "PyYAML",
     "phishdetect>=1.8.3",

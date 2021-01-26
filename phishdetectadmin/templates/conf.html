@@ -22,6 +22,7 @@
         <label for="key">API Key:</label><br />
         <input type="key" class="pd-input" name="key" value="" />
     </div>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <div><input type="submit" class="pd-btn" name="submit" value="Add" /></div>
 </form>
 
@@ -42,6 +43,7 @@
         <label for="smtp_pass">Password:</label><br />
         <input type="smtp_pass" class="pd-input" name="smtp_pass" value="{{ config.smtp_pass }}" />
     </div>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <div><input type="submit" class="pd-btn" name="submit" value="Save" /></div>
 </form>
 {% endblock %}

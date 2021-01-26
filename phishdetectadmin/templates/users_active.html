@@ -18,7 +18,13 @@
             <td>{{ user.name }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.uuid }}</td>
-            <td class="text-center"><button class="pd-btn-red" onClick="confirmDeactivation('{{ user.uuid }}');">Deactivate</button></td>
+            <td class="text-center">
+                <form method="POST" action="/users/deactivate/">
+                    <input type="hidden" name="uuid" value="{{ user.uuid }}"/>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <input type="submit" class="pd-btn-red" value="Deactivate">
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -26,14 +32,4 @@
 <p>There are no active users.</p>
 {% endif %}
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-function confirmDeactivation(uuid) {
-    if (confirm("Are you sure?")) {
-        location.href = "/users/deactivate/" + uuid + "/";
-    }
-}
-</script>
 {% endblock %}

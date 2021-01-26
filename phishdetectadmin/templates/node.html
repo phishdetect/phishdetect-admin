@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<form method="POST" action="/node/">
+<form method="POST" action="/node/select/">
     <select name="host" class="p-2 rounded bg-gray-300">
     {% for node in nodes %}
         {% if current_node and node.host == current_node["host"] %}<option selected>{{ node.host }} (current)</option>
@@ -8,6 +8,7 @@
         {% endif %}
     {% endfor %}
     </select>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <span class="ml-4"><input type="submit" class="pd-btn" name="submit" value="Select" /></span>
 </form>
 {% endblock %}

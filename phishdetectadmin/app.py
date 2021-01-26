@@ -16,16 +16,21 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import io
+import os
 import datetime
 import phishdetect
 from flask import Flask, render_template, request, redirect, url_for
 from flask import send_file, send_from_directory
+from flask_wtf import CSRFProtect
 
 from .config import load_config, save_config, load_archived_alerts, archive_alert
 from .utils import extract_domain, send_email
 from . import session
 
 app = Flask(__name__, static_url_path="")
+app.config["SECRET_KEY"] = os.urandom(32)
+csrf = CSRFProtect(app)
+
 
 #==============================================================================
 # Static
@@ -38,16 +43,18 @@ def js(path):
 def css(path):
     return send_from_directory("css", path)
 
+
 #==============================================================================
 # Configuration
 #==============================================================================
-@app.route("/conf/", methods=["GET"])
+@csrf.exempt
+@app.route("/conf/", methods=["GET",])
 def conf():
     return render_template("conf.html", page="Configuration",
                            config=load_config(),
                            current_node=session.__node__)
 
-@app.route("/conf/node/", methods=["POST"])
+@app.route("/conf/node/", methods=["POST",])
 def conf_node():
     host = request.form.get("host")
     key = request.form.get("key")
@@ -65,9 +72,9 @@ def conf_node():
     })
     save_config(config)
 
-    return redirect(url_for("index"))
+    return redirect(url_for("conf"))
 
-@app.route("/conf/smtp/", methods=["POST"])
+@app.route("/conf/smtp/", methods=["POST",])
 def conf_smtp():
     smtp_host = request.form.get("smtp_host")
     smtp_user = request.form.get("smtp_user")
@@ -88,47 +95,54 @@ def conf_smtp():
 
     return redirect(url_for("conf"))
 
-@app.route("/node/", methods=["GET", "POST"])
+@csrf.exempt
+@app.route("/node/", methods=["GET",])
 def node():
     config = load_config()
-    if request.method == "GET":
-        if not config:
-            return redirect(url_for("conf"))
+    if not config:
+        return redirect(url_for("conf"))
 
-        nodes = config["nodes"]
+    nodes = config["nodes"]
 
-        return render_template("node.html", page="Node Selection", nodes=nodes,
-                               current_node=session.__node__)
-    elif request.method == "POST":
-        host = request.form.get("host")
+    return render_template("node.html", page="Node Selection", nodes=nodes,
+                           current_node=session.__node__)
 
-        key = ""
-        for node in config["nodes"]:
-            if node["host"] == host:
-                key = node["key"]
-                break
+@app.route("/node/select/", methods=["POST",])
+def node_select():
+    config = load_config()
+    host = request.form.get("host")
 
-        session.__node__ = {
-            "host": host,
-            "key": key,
-        }
+    key = ""
+    for node in config["nodes"]:
+        if node["host"] == host:
+            key = node["key"]
+            break
 
-        return redirect(url_for("index"))
+    session.__node__ = {
+        "host": host,
+        "key": key,
+    }
+
+    return redirect(url_for("index"))
+
 
 #==============================================================================
 # Index
 #==============================================================================
-@app.route("/")
+@csrf.exempt
+@app.route("/", methods=["GET",])
 def index():
     if not session.__node__:
         return redirect(url_for("node"))
 
     return redirect(url_for("alerts"))
 
+
 #==============================================================================
 # Alerts
 #==============================================================================
-@app.route("/alerts/")
+@csrf.exempt
+@app.route("/alerts/", methods=["GET",])
 def alerts():
     if not session.__node__:
         return redirect(url_for("node"))
@@ -182,7 +196,8 @@ def alerts():
                            alerts=final, archived=archived,
                            current_node=session.__node__)
 
-@app.route("/alerts/archive")
+@csrf.exempt
+@app.route("/alerts/archive", methods=["GET",])
 def alerts_archive():
     if not session.__node__:
         return redirect(url_for("node"))
@@ -195,40 +210,41 @@ def alerts_archive():
 
     return redirect(url_for("alerts"))
 
+
 #==============================================================================
 # Indicators
 #==============================================================================
-@app.route("/indicators/pending/", methods=["GET", "POST"])
+@csrf.exempt
+@app.route("/indicators/pending/", methods=["GET",])
 def indicators_pending():
     if not session.__node__:
         return redirect(url_for("node"))
 
-    if request.method == "GET":
-        pd = phishdetect.PhishDetect(host=session.__node__["host"],
-                                     api_key=session.__node__["key"])
+    pd = phishdetect.PhishDetect(host=session.__node__["host"],
+                                 api_key=session.__node__["key"])
 
-        iocs = pd.indicators.get_pending()
-        return render_template("indicators_list.html", iocs=iocs,
-                               status="pending",
-                               page="Pending Indicators",
-                               current_node=session.__node__)
+    iocs = pd.indicators.get_pending()
+    return render_template("indicators_list.html", iocs=iocs,
+                           status="pending",
+                           page="Pending Indicators",
+                           current_node=session.__node__)
 
-@app.route("/indicators/disabled/", methods=["GET", "POST"])
+@csrf.exempt
+@app.route("/indicators/disabled/", methods=["GET",])
 def indicators_disabled():
     if not session.__node__:
         return redirect(url_for("node"))
 
-    if request.method == "GET":
-        pd = phishdetect.PhishDetect(host=session.__node__["host"],
-                                     api_key=session.__node__["key"])
+    pd = phishdetect.PhishDetect(host=session.__node__["host"],
+                                 api_key=session.__node__["key"])
 
-        iocs = pd.indicators.get_disabled()
-        return render_template("indicators_list.html", iocs=iocs,
-                               status="disabled",
-                               page="Disabled Indicators",
-                               current_node=session.__node__)
+    iocs = pd.indicators.get_disabled()
+    return render_template("indicators_list.html", iocs=iocs,
+                           status="disabled",
+                           page="Disabled Indicators",
+                           current_node=session.__node__)
 
-@app.route("/indicators/enable/", methods=["POST"])
+@app.route("/indicators/enable/", methods=["POST",])
 def indicators_enable():
     content = request.json
     iocs = content["iocs"]
@@ -241,7 +257,7 @@ def indicators_enable():
 
     return ("", 200)
 
-@app.route("/indicators/disable/", methods=["POST"])
+@app.route("/indicators/disable/", methods=["POST",])
 def indicators_disable():
     content = request.json
     iocs = content["iocs"]
@@ -254,62 +270,65 @@ def indicators_disable():
 
     return ("", 200)
 
-@app.route("/indicators/add/", methods=["GET", "POST"])
+@csrf.exempt
+@app.route("/indicators/add/", methods=["GET",])
 def indicators_add():
     if not session.__node__:
         return redirect(url_for("node"))
 
     # Get the form to add indicators.
-    if request.method == "GET":
-        ioc = request.args.get("ioc", None)
-        if ioc:
-            ioc = extract_domain(ioc)
+    ioc = request.args.get("ioc", None)
+    if ioc:
+        ioc = extract_domain(ioc)
 
-        return render_template("indicators_add.html", indicators=ioc,
-                               page="Add Indicators",
-                               current_node=session.__node__)
+    return render_template("indicators_add.html", indicators=ioc,
+                           page="Add Indicators",
+                           current_node=session.__node__)
+
+@app.route("/indicators/add/confirm/", methods=["POST",])
+def indicators_add_confirm():
     # Process new indicators to be added.
-    elif request.method == "POST":
-        enabled = bool(request.form.get("enabled", False))
-        indicators_string = request.form.get("indicators", "")
-        tags_string = request.form.get("tags", "")
+    enabled = bool(request.form.get("enabled", False))
+    indicators_string = request.form.get("indicators", "")
+    tags_string = request.form.get("tags", "")
 
-        indicators_string = indicators_string.strip()
-        tags_string = tags_string.strip()
+    indicators_string = indicators_string.strip()
+    tags_string = tags_string.strip()
 
-        if indicators_string == "":
-            return render_template("indicators_add.html",
-                                   page="Add Indicators",
-                                   error="You didn't provide a valid list of indicators",
-                                   current_node=session.__node__)
+    if indicators_string == "":
+        return render_template("indicators_add.html",
+                               page="Add Indicators",
+                               error="You didn't provide a valid list of indicators",
+                               current_node=session.__node__)
 
-        if tags_string == "":
-            tags = []
-        else:
-            tags = [t.lower().strip() for t in tags_string.split(",")]
+    if tags_string == "":
+        tags = []
+    else:
+        tags = [t.lower().strip() for t in tags_string.split(",")]
 
-        indicators = [i.lower().strip() for i in indicators_string.split()]
+    indicators = [i.lower().strip() for i in indicators_string.split()]
 
-        try:
-            pd = phishdetect.PhishDetect(host=session.__node__["host"],
-                                         api_key=session.__node__["key"])
+    try:
+        pd = phishdetect.PhishDetect(host=session.__node__["host"],
+                                     api_key=session.__node__["key"])
 
-            results = pd.indicators.add(indicators=indicators, tags=tags,
-                                        enabled=enabled)
-        except Exception as e:
-            return render_template("error.html",
-                                   msg="The connection to the PhishDetect Node failed: {}".format(e),
-                                   current_node=session.__node__)
+        results = pd.indicators.add(indicators=indicators, tags=tags,
+                                    enabled=enabled)
+    except Exception as e:
+        return render_template("error.html",
+                               msg="The connection to the PhishDetect Node failed: {}".format(e),
+                               current_node=session.__node__)
 
-        if "error" in results:
-            return render_template("indicators_add.html",
-                                   page="Indicators", error=results["error"],
-                                   tags=tags_string, indicators=indicators_string,
-                                   current_node=session.__node__)
+    if "error" in results:
+        return render_template("indicators_add.html",
+                               page="Indicators", error=results["error"],
+                               tags=tags_string, indicators=indicators_string,
+                               current_node=session.__node__)
 
-        msg = "Added {} new indicators successfully!".format(results["counter"])
-        return render_template("success.html", msg=msg)
+    msg = "Added {} new indicators successfully!".format(results["counter"])
+    return render_template("success.html", msg=msg)
 
+@csrf.exempt
 @app.route("/indicators/view/<string:sha256>/", methods=["GET",])
 def indicators_view(sha256):
     if not session.__node__:
@@ -328,9 +347,11 @@ def indicators_view(sha256):
                            page="Indicator Details", ioc=results,
                            current_node=session.__node__)
 
+
 #==============================================================================
 # Reports
 #==============================================================================
+@csrf.exempt
 @app.route("/reports/", methods=["GET",])
 def reports():
     if not session.__node__:
@@ -349,6 +370,7 @@ def reports():
                            page="Reports", reports=results,
                            current_node=session.__node__)
 
+@csrf.exempt
 @app.route("/reports/view/<string:uuid>/", methods=["GET",])
 def report_view(uuid):
     if not session.__node__:
@@ -366,6 +388,7 @@ def report_view(uuid):
                            page="Report", report=results,
                            current_node=session.__node__)
 
+@csrf.exempt
 @app.route("/reports/download/<string:uuid>/", methods=["GET",])
 def report_download(uuid):
     if not session.__node__:
@@ -399,9 +422,11 @@ def report_download(uuid):
     return send_file(mem, mimetype=mimetype, as_attachment=True,
                      attachment_filename=filename)
 
+
 #==============================================================================
 # Users
 #==============================================================================
+@csrf.exempt
 @app.route("/users/", methods=["GET",])
 def users_pending():
     if not session.__node__:
@@ -419,6 +444,7 @@ def users_pending():
                            page="Users", users=results,
                            current_node=session.__node__)
 
+@csrf.exempt
 @app.route("/users/active/", methods=["GET",])
 def users_active():
     if not session.__node__:
@@ -436,10 +462,12 @@ def users_active():
                            page="Users", users=results,
                            current_node=session.__node__)
 
-@app.route("/users/activate/<string:uuid>/", methods=["GET",])
-def users_activate(uuid):
+@app.route("/users/activate/", methods=["POST",])
+def users_activate():
     if not session.__node__:
         return redirect(url_for("node"))
+
+    uuid = request.form.get("uuid", "")
 
     # First we get the pending users (before activating the current).
     pd = phishdetect.PhishDetect(host=session.__node__["host"],
@@ -481,10 +509,12 @@ def users_activate(uuid):
                            msg="The user has been activated successfully",
                            current_node=session.__node__)
 
-@app.route("/users/deactivate/<string:uuid>/", methods=["GET",])
-def users_deactivate(uuid):
+@app.route("/users/deactivate/", methods=["POST",])
+def users_deactivate():
     if not session.__node__:
         return redirect(url_for("node"))
+
+    uuid = request.form.get("uuid", "")
 
     # First we get the pending users (before activating the current).
     pd = phishdetect.PhishDetect(host=session.__node__["host"],
