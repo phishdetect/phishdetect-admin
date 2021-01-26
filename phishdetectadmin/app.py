@@ -31,6 +31,12 @@ app = Flask(__name__, static_url_path="")
 app.config["SECRET_KEY"] = os.urandom(32)
 csrf = CSRFProtect(app)
 
+@app.after_request
+def security_headers(response):
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    return response
 
 #==============================================================================
 # Static
