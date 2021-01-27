@@ -19,7 +19,7 @@
             <td>{{ user.email }}</td>
             <td>{{ user.uuid }}</td>
             <td class="text-center">
-                <form method="POST" action="/users/deactivate/">
+                <form method="POST" action="/users/deactivate/" onsubmit="return confirm('Are you sure?');">
                     <input type="hidden" name="uuid" value="{{ user.uuid }}"/>
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <input type="submit" class="pd-btn-red" value="Deactivate">
