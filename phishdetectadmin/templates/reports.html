@@ -26,8 +26,8 @@
                 {% if report.type == "url" %}
                     {{ report.content }}
                 {% else %}
-                <button class="pd-btn-outline" onClick="location.href='/reports/view/{{ report.uuid }}/'">View</button>
-                <button class="pd-btn ml-2" onClick="location.href='/reports/download/{{ report.uuid }}/'">Download</button>
+                <a class="pd-btn-outline" href="/reports/view/{{ report.uuid }}/">View</a>
+                <a class="pd-btn ml-2" href="/reports/download/{{ report.uuid }}/">Download</a>
                 {% endif %}
             </td>
         </tr>
