@@ -31,7 +31,7 @@ requires = (
     "flask_wtf",
     "requests",
     "PyYAML",
-    "phishdetect>=1.8.3",
+    "phishdetect>=1.10.0",
 )
 
 def get_package_data(package):
