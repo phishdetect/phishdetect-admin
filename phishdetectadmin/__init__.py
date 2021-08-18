@@ -59,7 +59,7 @@ def main(debug=False):
         app.config["TESTING"] = True
 
     # We launch the Flask app.
-    app.run(port=port, debug=False)
+    app.run(port=port, debug=debug)
 
 if __name__ == "__main__":
     main()
