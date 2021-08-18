@@ -16,6 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+
 import yaml
 
 storage_folder = os.path.join(os.getenv("HOME"), ".config", "phishdetect")

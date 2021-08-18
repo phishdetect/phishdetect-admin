@@ -16,7 +16,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 __package_name__ = "phishdetect-admin"
 __version__ = "5.3.0"

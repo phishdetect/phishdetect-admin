@@ -15,17 +15,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import datetime
 import io
 import os
-import datetime
+
 import phishdetect
-from flask import Flask, render_template, request, redirect, url_for
-from flask import send_file, send_from_directory
+from flask import (Flask, redirect, render_template, request, send_file,
+                   send_from_directory, url_for)
 from flask_wtf import CSRFProtect
 
-from .config import load_config, save_config, load_archived_alerts, archive_alert
-from .utils import extract_domain, send_email
 from . import session
+from .config import (archive_alert, load_archived_alerts, load_config,
+                     save_config)
+from .utils import extract_domain, send_email
 
 app = Flask(__name__, static_url_path="")
 app.config["SECRET_KEY"] = os.urandom(32)

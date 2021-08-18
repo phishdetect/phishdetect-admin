@@ -23,6 +23,7 @@ import webbrowser
 from .app import app
 from .config import storage_folder
 
+
 def logo():
     print("""
          _     _     _         _      _            _   

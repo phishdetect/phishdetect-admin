@@ -21,6 +21,7 @@ from urllib.parse import urlparse
 
 from .config import load_config
 
+
 def extract_domain(url):
     parsed_url = urlparse(url)
     return parsed_url.netloc
